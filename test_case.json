@@ -1,0 +1,38 @@
+{
+   "name":"Prevoty XSS",
+   "globals":{
+      "variables":{
+        "baseApiUrl":"https://api.prevoty.com",
+        "api_key":"82ddb7e2-883c-4290-83f7-d15a8ba4aa7e",
+        "rule_key":"108ee29a-a2cb-49ec-b053-2e82f198ce08"
+      }
+   },
+   "testSteps":[
+      {
+         "name":"Prevoty Key Verification",
+         "dumpResponse":"yes",
+         "skip":"True",
+         "apiUrl":"{baseApiUrl}/1/key/verify?api_key={api_key}",
+         "assertMap": {
+            "verified":true,
+            "message":"api_key is valid"
+         }
+      },
+      {
+         "name":"XSS Basic test",
+         "apiUrl":"{baseApiUrl}/1/xss/filter",
+         "method":"post",
+         "params":{
+            "api_key":"{api_key}",
+            "input":"<script>Hello World!</script>",
+            "rule_key":"{rule_key}"
+         },
+         "assertMap": {
+              "message":"",
+              "output":"Hello World!",
+              "statistics.javascript_tags":2,
+              "statistics.transformations":2
+         }
+      }
+   ]
+}
