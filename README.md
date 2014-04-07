@@ -62,19 +62,24 @@ Example of a TestStep:
   ]
   ```
 
-#Prereqs/Dependencies
+#Pre-reqs/Dependencies
 * requests - pip install requests
 
 #Installation
 Clone the repo and get started!
 The main class is testapi.py
 
-#RESTTest Innvocation Patterns
-- Run the default test case
-  python apitester.py - this will look for the default test case - test_case.json
+#RESTTest Invocation Patterns
+- Run the default test case -
+
+  ```python apirunner.py```
+
+  This will look for the default test case, ***test_case.json***
 - Run a specific test case - use the command line option ***--tc=<file_name>***
+
   e.g. invoke a test case specified in the file "test_case.json"
-  python apitester.py --tc=test_case.json
+
+  ```python apirunner.py --tc=test_case.json```
 
 - Run the default test suite
 - Run a specific test suite
@@ -83,8 +88,10 @@ The main class is testapi.py
 - Adjust the log output or details
   RESTTest support varying levels of logs - DEBUG, INFO, WARN, ERROR. You can
   specify the level using the command line option ***--log=<LEVEL>***
+
   e.g. run the API with INFO level
-  python apitester.py  --log=INFO
+
+  ```python apirunner.py  --log=INFO```
 
 - Just dump the JSON output
 

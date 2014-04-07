@@ -9,7 +9,7 @@ def parse_cmdln_args():
         '--tc', help='test_case help', default='test_case.json')
 
     args = parser.parse_args()
-    return (args.log.upper(), args.test_case)
+    return (args.log.upper(), args.tc)
 
 if (__name__ == '__main__'):
     log_level, test_case = parse_cmdln_args()
