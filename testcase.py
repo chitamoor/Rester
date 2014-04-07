@@ -5,9 +5,12 @@ import logging
 
 # TODO
 # - Aggregate results and print summary
-# - Create a Runner class that processess a bunch of test suites
-# - Documentation
-# - Commit code to github
+#    - Clean up output
+# - Other command line options
+#   - just dump output
+#   - dump to an output file
+#   - Add short and long command line option
+# - Documentation - borrow concepts from - https://docs.python.org/2/library/unittest.html
 
 # - Define modes of operation
 #   - Run an individual test case
@@ -65,21 +68,18 @@ class ApiTestCaseRunner:
         self._test_cases.append(test_case)
         self._process_config(test_case)
 
-    def _process_test_suite(self, test_case_file):
-        with open(test_case_file) as file:
-            self.logger.info('Processing test suite %s', test_case_file)
-            json_data = json.load(file)
-            return JsonWrapper(json_data)
-            # print test_case.name, test_case.globals._variables.iamLaLaBaseUrl
-            # print json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': '))
-            # print json_data["globals"]["assertMaps"]
-
     def display_report(self):
         self.logger.info("\n\n ############################ TEST RESULTS ############################")
         for test_case in self._test_cases:
             self.logger.info('\n\n ===> TestCase  name : %s, status : %s', test_case.name, "Passed" if test_case.passed == True else "Failed!")
             for test_step in test_case.testSteps:
                 self.logger.info('\n     ====> Test Step name : %s, status : %s, message : %s', test_step.name, test_step.result.status, test_step.result.message)
+
+    def _process_test_suite(self, test_case_file):
+        with open(test_case_file) as file:
+            self.logger.info('Processing test suite %s', test_case_file)
+            json_data = json.load(file)
+            return JsonWrapper(json_data)
 
     def _process_config(self, test_case):
         for key, value in test_case.globals.variables.items().items():
