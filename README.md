@@ -4,7 +4,7 @@ Framework for testing RESTful APIs
 ----------------------------------
 The RESTTest allows you to test your APIs using a non-programatic or GUI based approach (which are the more conventional ways of testing internal APIs). RESTTest is inspired by various unittesting frameworks like JUnit, unittest etc and is conceptually organized like those frameworks but is geared towards resting RESTful APIs. With RESTTest, all tests are specified in JSON, so it can also be used by non-programmers.
 
-#So, which RESTTest?
+#So, why RESTTest?
 Testing RESTful APIs require generally involves two prediticable steps -
 
 - Invoke the API end point
