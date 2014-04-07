@@ -2,9 +2,23 @@ RESTTest
 ========
 Framework for testing RESTful APIs
 ----------------------------------
-The RESTTest allows you to test your APIs using a non-programatic or GUI based approach (which are the more conventional ways of testing internal APIs). With RESTTest, all  tests are specified in JSON, so it can also be used by non-programmers.
+The RESTTest allows you to test your APIs using a non-programatic or GUI based approach (which are the more conventional ways of testing internal APIs). RESTTest is inspired by various unittesting frameworks like JUnit, unittest etc and is conceptually organized like those frameworks but is geared towards resting RESTful APIs. With RESTTest, all tests are specified in JSON, so it can also be used by non-programmers.
 
-Note: As of now it only supports internal APIs, but future versions will support OAuth and hence external APIs as well. The RESTTest was mainly created to test internal RESTful APIs that don't require authentication of the actual REST calls.
+#So, which RESTTest?
+Testing RESTful APIs require generally involves two prediticable steps -
+
+- Invoke the API end point
+- Validate the response (JSON, XML etc)
+
+Most testing tools available for testing RESTFul APIs use some sort of a GUI based approach which doesn't lend itself towards re-use, organization, abstraction etc and some of the other benefits that are generally available with more programmtic frameworks like JUnit. Programmtically building test cases provides the highest level of flexibility and sophistication, but the downside to that is one ends up with maintaining a lots of fairly repetitive code. Though RESTTest takes the approach of these existing unit testing frameworks, it uses JSON instead of a programming language to implement the actual tests. It can be used by programmers and non-programmers.
+
+
+Note: As of now RESTTest only supports APIs that don't require explicit authentication of calls, but future versions will support OAuth. The RESTTest was mainly created to test internal RESTful APIs that generally bypass the need for authentication of the calls. Also, RESTTest only supports validation of JSON responses/payloads.
+
+
+#Assumptions
+RESTTest does not manage the life-cycle of the container/server that exposes the API endpoints. RESTTest assumes the API endpoints (to be tested) are up and avaliable. Unlike other unittesting frameworks however, RESTTest does guarantee the order of execution of the **TestSteps** within a **TestCase**. For a more better understanding of TestSteps and TestCases see the "General Concepts" section below. The **ordering** will come in hands if you want to test a series of API end-points (invoked in succession) that modify system state in a particular way.
+
 
 #General Concepts
 * ###TestSuite:
