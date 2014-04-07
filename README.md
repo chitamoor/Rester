@@ -87,14 +87,14 @@ The main class is testapi.py
 #RESTTest Invocation Patterns
 - Run the default test case -
 
-  ```python apirunner.py```
+  `python apirunner.py`
 
   This will look for the default test case, ***test_case.json***
 - Run a specific test case - use the command line option ***--tc=<file_name>***
 
   e.g. invoke a test case specified in the file "test_case.json"
 
-  ```python apirunner.py --tc=test_case.json```
+  `python apirunner.py --tc=test_case.json`
 
 - Run the default test suite
 - Run a specific test suite
@@ -106,7 +106,7 @@ The main class is testapi.py
 
   e.g. run the API with INFO level
 
-  ```python apirunner.py  --log=INFO```
+  `python apirunner.py  --log=INFO`
 
 - Just dump the JSON output
 
