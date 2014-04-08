@@ -4,22 +4,15 @@ import re
 import logging
 
 # TODO
+# Better exception handling
 # - Aggregate results and print summary
 #    - Clean up output
 # - Other command line options
 #   - just dump output
 #   - dump to an output file
-#   - Add short and long command line option
-# - Documentation - borrow concepts from - https://docs.python.org/2/library/unittest.html
-
-# - Define modes of operation
-#   - Run an individual test case
-#   - Run a test suite
-#   - Pass cmd line args to both test cases and test suites
 
 
 class JsonWrapper(object):
-
     def __init__(self, d):
         for key, value in d.items():
             if isinstance(value, (list, tuple)):
@@ -53,18 +46,14 @@ class ApiTestCaseRunner:
         self._test_cases = []
         self._pattern = re.compile(r'\{(\w+)\}')
 
-    # def run_test_suite(testSuiteFile, configFile):
-    #     if (configFile):
-    #         processConfig(parseJsonFile(configFile))
-    #     }
-    #     def testSuite = parseJsonFile(testSuiteFile)
-    #     testSuite.tests.each {
-    #         runTestCase(new File(it))
-    #     }
-    #     displayReport();
+    def run_test_suite(self, test_suite_file_name):
+        test_suite = self._process_test_file(test_suite_file_name)
+        for test_case_file_name in test_suite.tests:
+            print "test case : " + test_case_file_name
+            self.run_test_case(test_case_file_name)
 
-    def run_test_case(self, test_case_file):
-        test_case = self._process_test_suite(test_case_file)
+    def run_test_case(self, test_case_file_name):
+        test_case = self._process_test_file(test_case_file_name)
         self._test_cases.append(test_case)
         self._process_config(test_case)
 
@@ -75,9 +64,9 @@ class ApiTestCaseRunner:
             for test_step in test_case.testSteps:
                 self.logger.info('\n     ====> Test Step name : %s, status : %s, message : %s', test_step.name, test_step.result.status, test_step.result.message)
 
-    def _process_test_suite(self, test_case_file):
-        with open(test_case_file) as file:
-            self.logger.info('Processing test suite %s', test_case_file)
+    def _process_test_file(self, test_file):
+        with open(test_file) as file:
+            self.logger.info('Processing test file %s', test_file)
             json_data = json.load(file)
             return JsonWrapper(json_data)
 
