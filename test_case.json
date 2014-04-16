@@ -3,8 +3,8 @@
    "globals":{
       "variables":{
         "baseApiUrl":"https://api.prevoty.com",
-        "api_key":"82ddb7e2-883c-4290-83f7-d15a8ba4aa7e",
-        "rule_key":"108ee29a-a2cb-49ec-b053-2e82f198ce08"
+        "api_key":"YOUR-KEY",
+        "rule_key":"RULE-KEY"
       }
    },
    "testSteps":[
