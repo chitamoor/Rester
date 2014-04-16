@@ -50,14 +50,15 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
  ```
 
 * ###TestStep:
-  All of the action in RESTTest takes place in a TestStep**
+  All of the action in RESTTest takes place in a **TestStep**
 For a more complete list of all the options, please see.
+
 A TestStep contains the following -
 
 - **API invocation** - As part of the API invocation, you are expected to supply the following minimal params -
   - URL
   - URL params
-  - HTTP methods - get, put, post, delete
+  - HTTP method - get, put, post, delete ('get' is used by default)
 
 - A series of assert statements specified as part of an **AssertMap**
 - Post step assignments
