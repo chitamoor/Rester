@@ -23,8 +23,16 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
 
 #General Concepts
 * ###TestSuite:
- A TestSuite is collection of TestCases. The idea is to group related 'test cases' together. Global variables that need to be shared across the test cases can be declared as part of the test suite.
+ A TestSuite is collection of **TestCases**. The idea is to group related 'test cases' together. Global variables that need to be shared across the test cases can be declared as part of the test suite.
 
+```
+{
+   "test_cases":[
+                 "test_case_1.json", 
+                 "test_case_2.json"
+                ]
+}
+```
 
 * ###TestCase:
  A TestCase contains one or more TestSteps. You can declare **globals** variables to be re-used across test steps. For a more complete list of all the options, please see -
@@ -99,8 +107,8 @@ The main class is testapi.py
 
   `python apirunner.py --tc=test_case.json`
 
-- Run the default test suite
 - Run a specific test suite
+  `python apirunner.py --ts=test_suite.json`
 
 #Other command line options
 - Adjust the log output or details
@@ -124,6 +132,7 @@ All the results are directed to the console by default. You can control the leve
 #Organizing the tests
 
 #TODO
+- Create a PyPi distributable
 - Plenty of refactoring :-)
 - Support for POSTing JSON payloads
 - More logical operators checks for the asserts - e.g. ne, gt, lt etc
