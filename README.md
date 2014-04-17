@@ -17,7 +17,7 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
 
 
 #Assumptions
-- RESTTest does not manage the life-cycle of the container/server that exposes the API endpoints. RESTTest assumes the API endpoints (to be tested) are up and avaliable. 
+- RESTTest does not manage the life-cycle of the container/server that exposes the API endpoints. RESTTest assumes the API endpoints (to be tested) are up and avaliable.
 - Unlike other unittesting frameworks however, RESTTest does guarantee the order of execution of the **TestSteps** within a **TestCase**. For a better understanding of TestSteps and TestCases see the "General Concepts" section below. The **ordering** will come in hands if you want to test a series of API end-points (invoked in succession) that modify system state in a particular way.
 
 
@@ -123,6 +123,7 @@ All the results are directed to the console by default. You can control the leve
 
 #TODO
 - Support for HTTP headers
+- Support for POSTing Json payloads
 - More logical operators for the asserts - e.g. ne, gt, lt etc
 - Tabular summary
 - Support for simple datatypes - lists, integers, strings etc

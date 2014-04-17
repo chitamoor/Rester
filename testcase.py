@@ -28,6 +28,7 @@ class JsonWrapper(object):
             curr_level = levels.pop(0)
             return getattr(self.__dict__[curr_level], '.'.join(levels))
         else:
+            #print "name : " + name
             return self.__dict__[name]
 
     def __setattr__(self, key, value):
@@ -36,6 +37,10 @@ class JsonWrapper(object):
     def items(self):
         return self.__dict__
 
+class JsonResponseWrapper(object):
+    def __init__(self, json, headers):
+        self.json_wrapper = JsonWrapper(json)
+        self.headers = JsonWrapper(headers)
 
 class ApiTestCaseRunner:
 
@@ -97,6 +102,12 @@ class ApiTestCaseRunner:
             method = test_step.method if hasattr(
                 test_step, 'method') else "get"
 
+            headers = {}
+            if hasattr(test_step, 'headers') and test_step.headers is not None:
+                self.logger.debug('Found Headers')
+                for key, value in test_step.headers.items().items():
+                    headers[key] = self._evaluate_expression(value)
+
             params = {}
             if hasattr(test_step, 'params') and test_step.params is not None:
                 self.logger.debug('Found params')
@@ -105,26 +116,20 @@ class ApiTestCaseRunner:
 
             self.logger.debug(
                 'Evaluated URL : %s', self._evaluate_expression(test_step.apiUrl))
-            json_response = self._get_api_json_response(
-                self._evaluate_expression(test_step.apiUrl), method, params, True)
-            if json_response is None:
+            json_response_wrapper = self._get_api_json_response_wrapper(
+                self._evaluate_expression(test_step.apiUrl), method, headers, params, True)
+            if json_response_wrapper is None:
                 return "Invalid JSON response or Error code"
 
             if hasattr(test_step, "assertMap"):
-                self.logger.debug('Evaluating assertMaps')
-                for key, value in test_step.assertMap.items().items():
-                    self.logger.debug("key : %s, value : %s", key, value)
-                    json_eval_expr = getattr(json_response, key, '')
-                    if json_eval_expr != value:
-                        assert_message = 'Assert Failed!!! for key : %s, json_eval_expr : %s,\
-                        assert_msg : %s', key, json_eval_expr, value
-                        self.logger.error('%s', assert_message)
-                        test_step.result = {
-                            "status": False, "message": assert_message}
-                    else:
-                        assert_message = 'Assert Passed! for key : %s, json_eval_expr : %s,\
-                        assert_msg : %s', key, json_eval_expr, value
-                        test_step.result = {"status": True, "message": assert_message}
+                assertMap = test_step.assertMap
+                if hasattr(assertMap, "headers"):
+                    self.logger.debug('Evaluating Response headers : ' + str(json_response_wrapper.headers))
+                    self._asset_element_list(test_step, json_response_wrapper.headers, test_step.assertMap.headers.items().items())
+
+                if hasattr(assertMap, "payLoad"):
+                    self.logger.debug('Evaluating Response Payload')
+                    self._asset_element_list(test_step, json_response_wrapper.json_wrapper, test_step.assertMap.payLoad.items().items())
 
             if test_case.passed == True:
                 test_case.passed = test_step.result.status
@@ -135,25 +140,42 @@ class ApiTestCaseRunner:
                         \n !!! Will ignore all assignment statements as part of TestStep', test_step.name, inst)
             test_step.result = {"status": False, "message": inst}
 
-    def _get_api_json_response(self, api_url, method, params, dump_response):
+    def _asset_element_list(self, test_step, target_response, assert_list):
+        self.logger.debug("Inside assert_element_list : " + str(target_response))
+        for key, value in assert_list:
+            self.logger.debug('key : %s, value : %s', key, value)
+
+            json_eval_expr = getattr(target_response, key, '')
+            self.logger.debug('json_eval_expr : %s ', json_eval_expr)
+
+            if json_eval_expr != value:
+                assert_message = 'Assert Failed!!! for key : %s, json_eval_expr : %s,\
+                assert_msg : %s', key, json_eval_expr, value
+                self.logger.error('%s', assert_message)
+                test_step.result = {
+                    "status": False, "message": assert_message}
+            else:
+                assert_message = 'Assert Passed! for key : %s, json_eval_expr : %s,\
+                assert_msg : %s', key, json_eval_expr, value
+                test_step.result = {"status": True, "message": assert_message}
+
+    def _get_api_json_response_wrapper(self, api_url, method, headers, params, dump_response):
         self.logger.debug(
             '\n Invoking REST Call... api_url: %s, method: %s : ', api_url, method)
         allowed_methods = ["get", "post", "put", "delete"]
         if method in allowed_methods:
-            json_response = getattr(requests, method)(api_url, params=params)
-        # if method == 'get':
-        #     json_response = requests.get(api_url, params=params)
-        # elif method == 'post':
-        #     json_response = requests.post(api_url, params=params)
+            json_response = getattr(requests, method)(api_url, headers=headers, params=params)
         else:
             self.logger.error('undefined HTTP method!!! %s', method)
 
         if dump_response:
+            self.logger.info('JSON response Headers -  %s' + str(json_response.headers))
             self.logger.info('JSON response -  %s' + json.dumps(
                 json_response.json(), sort_keys=True, indent=2))
 
         if json_response.status_code is 200:
-            return JsonWrapper(json_response.json())
+            #return JsonWrapper(json_response.json())
+            return JsonResponseWrapper(json_response.json(), json_response.headers)
         else:
             return None
 
@@ -177,8 +199,9 @@ class ApiTestCaseRunner:
         # }
 
     def _evaluate_expression(self, expression):
-        self.logger.debug('_evaluate_expression : %s', expression)
-
         result = self._pattern.sub(
             lambda var: self._variables[var.group(1)], expression)
+
+        self.logger.debug('_evaluate_expression : %s - result : %s', expression, result)
+
         return result

@@ -14,15 +14,17 @@
          "skip":"True",
          "apiUrl":"{baseApiUrl}/1/key/verify?api_key={api_key}",
          "assertMap": {
-            "verified":true,
-            "message":"api_key is valid"
+            "payLoad":{
+              "verified":true,
+              "message":"api_key is valid"
+            }
          }
       },
       {
          "name":"XSS Basic test",
          "apiUrl":"{baseApiUrl}/1/xss/filter",
          "headers":{
-            "content-type":"application/json"
+            "content-type":"application/json;"
          },
          "method":"post",
          "params":{
@@ -30,11 +32,16 @@
             "input":"<script>Hello World!</script>",
             "rule_key":"{rule_key}"
          },
-         "assertMap": {
-              "message":"",
-              "output":"Hello World!",
-              "statistics.javascript_tags":2,
-              "statistics.transformations":2
+         "assertMap":{
+              "headers":{
+                "content-type":"application/json; charset=utf-8"
+              },
+              "payLoad":{
+                "message":"",
+                "output":"Hello World!",
+                "statistics.javascript_tags":2,
+                "statistics.transformations":2
+              }
          }
       }
    ]
