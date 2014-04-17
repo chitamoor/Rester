@@ -22,8 +22,8 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
 
 
 #General Concepts
-* ###TestSuite###:
- A TestSuite is collection of **TestCases**. The idea is to group related 'test cases' together. Global variables that need to be shared across the test cases can be declared as part of the test suite.
+* **TestSuite**:
+ A *TestSuite* is collection of *TestCases*. The idea is to group related 'test cases' together. Global variables that need to be shared across the test cases can be declared as part of the test suite.
 
 ```
 {
@@ -35,7 +35,7 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
 ```
 
 * **TestCase**:
- A TestCase contains one or more TestSteps. You can declare **globals** variables to be re-used across test steps. For a more complete list of all the options, please see -
+ A *TestCase* contains one or more *TestSteps*. You can declare **globals** variables to be re-used across test steps. For a more complete list of all the options, please see -
 
 
 ```
@@ -58,7 +58,7 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
  ```
 
 * **TestStep**:
-  All of the action in RESTTest takes place in a **TestStep**
+  All of the action in RESTTest takes place in a **TestStep**.
 For a more complete list of all the options, please see.
 
 A TestStep contains the following -
