@@ -69,12 +69,14 @@ Example of a TestStep:
   testSteps: [
        "name":"Name of TestStep",
   		"apiUrl":"http://example/api/v1/helloworld/print",
-         "assertMap":
-         [
-             {
+         "assertMap":{
+             "headers":{
+                 "content-type":"application/json; charset=utf-8"
+             }
+             "payLoad":{
                 "message":"Hello World!",
              }
-         ]
+         }
   ]
   ```
 
@@ -122,7 +124,6 @@ All the results are directed to the console by default. You can control the leve
 #Organizing the tests
 
 #TODO
-- Support for HTTP headers
 - Support for POSTing Json payloads
 - More logical operators for the asserts - e.g. ne, gt, lt etc
 - Tabular summary
