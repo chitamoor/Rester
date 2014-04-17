@@ -124,13 +124,14 @@ All the results are directed to the console by default. You can control the leve
 #Organizing the tests
 
 #TODO
-- Support for POSTing Json payloads
-- More logical operators for the asserts - e.g. ne, gt, lt etc
-- Tabular summary
+- Plenty of refactoring :-)
+- Support for POSTing JSON payloads
+- More logical operators checks for the asserts - e.g. ne, gt, lt etc
+- Cleaner results summary (Tabular?)
 - Support for simple datatypes - lists, integers, strings etc
 - Supoport for JSON schema validation
 - Support for enums
-- Support of OAuth/authentication
+- Support for OAuth/authentication
 - YAML format for specifying the tests
 
 
