@@ -74,7 +74,7 @@ Example of a TestStep:
                  "content-type":"application/json; charset=utf-8"
              }
              "payLoad":{
-                "message":"Hello World!",
+                "message":"Hello World!"
              }
          }
   ]
