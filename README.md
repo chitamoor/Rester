@@ -132,7 +132,8 @@ All the results are directed to the console by default. You can control the leve
 #Organizing the tests
 
 #TODO
-- Create a PyPi distributable
+- Create a package support and PyPi distributable
+- Unit Tests
 - Plenty of refactoring :-)
 - Support for POSTing JSON payloads
 - More logical operators checks for the asserts - e.g. ne, gt, lt etc
