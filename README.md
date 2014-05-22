@@ -127,7 +127,7 @@ The main class is testapi.py
 
 - Just dump the JSON output
 
-#Intepreting the results
+#Interpreting the results
 All the results are directed to the console by default. You can control the level of output by specifying the --log command line option. You can direct the output to a file using the --opfile command line option.
 
 #TestCase options
@@ -152,14 +152,17 @@ All the results are directed to the console by default. You can control the leve
   ]
   ```
 
-- Specify the URL params as part of an API request 
-  Two ways to specific URL params
+- Specify the URL params as part of an API request. 
+  There are two ways to specific URL params, which are mentioned below - 
   
   ```
   testSteps: [
     {
        "name":"Name of TestStep",
   		   "apiUrl":"http://example/api/v1/helloworld/print",
+  		   "headers":{
+  		      ...
+       },
        "params":{
             "param_1":"value1", 
             "param_2":"value2"
@@ -174,7 +177,7 @@ All the results are directed to the console by default. You can control the leve
   testSteps: [
     {
        "name":"Name of TestStep",
-  		   "apiUrl":"http://example/api/v1/helloworld/print?param_1=value1&param_2=value2",
+  		"apiUrl":"http://example/api/v1/helloworld/print?param_1=value1&param_2=value2",
        ....
     }    
   ]
