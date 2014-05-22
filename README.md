@@ -2,28 +2,32 @@ RESTTest
 ========
 Framework for testing RESTful APIs
 ----------------------------------
-The RESTTest allows you to test your APIs using a non-programatic or non-GUI based approach (which are some of the more conventional ways of testing RESTFul APIs). RESTTest is inspired by various unittesting frameworks like JUnit, 'unittest' etc and is conceptually organized like those frameworks but is geared towards testing RESTful API endpoints. With RESTTest, all tests are specified in JSON, so it can also be used by non-programmers as well. 
+RESTTest allows you to test your APIs using a non-programatic or non-GUI based approach (which are some of the more conventional ways of testing RESTFul APIs). RESTTest is inspired by various unit testing frameworks like JUnit, 'unittest' (python) etc and is conceptually organized like those frameworks but is geared towards testing RESTful API endpoints. With RESTTest, all tests are specified in JSON, so it can also be used by non-programmers as well. 
 
 #So, why RESTTest?
 Testing RESTful APIs generally involves two prediticable steps -
 
 - Invoke the API end point
-- Validate the response (JSON, XML etc)
+- Validate the response - header, payload etc
 
 Most testing tools available for testing RESTful APIs use some sort of a GUI based approach which doesn't lend itself towards re-use, better code organization, abstraction etc and some of the other benefits that are generally available with more programmatic frameworks like JUnit. Programmatically building test cases provides the highest level of flexibility and sophistication, but the downside to this approach is that it ends up with lots of fairly tedious and repetitive code. Conceptually, RESTTest is similar to existing unit testing frameworks, but it uses JSON (instead of a programming language) to implement/specify the actual tests. It can be used by programmers and non-programmers alike, but reap all the benefits of a unittesting framework.
 
 
-Note: As of now RESTTest only supports APIs that don't require explicit authentication of calls, but future versions will support OAuth. The RESTTest was mainly created to test internal RESTful APIs that generally bypass the need for authentication of the calls. Also, RESTTest only supports validation of JSON responses/payloads.
+Note: As of now RESTTest only supports APIs that don't require explicit authentication of calls, but future versions will support OAuth. The RESTTest was mainly created to test internal RESTful APIs that generally bypass the need for authentication of the calls. Also, RESTTest only supports validation of JSON responses.
 
+#Practical uses of RESTTest
+- Perform "integration" testing of internal and external RESTful API endpoints
+- Examine and test complex response payloads 
+- You can simply use RESTTest to dump and analyze API responses - headers, payload etc.
 
 #Assumptions
-- RESTTest does not manage the life-cycle of the container/server that exposes the API endpoints. RESTTest assumes the API endpoints (to be tested) are up and avaliable.
+- RESTTest does not manage the life-cycle of the container or the server that exposes the API endpoints. RESTTest assumes the API endpoints to be tested are up and avaliable.
 - Unlike other unittesting frameworks however, RESTTest does guarantee the order of execution of the **TestSteps** within a **TestCase**. For a better understanding of TestSteps and TestCases see the "General Concepts" section below. The **ordering** will come in hands if you want to test a series of API end-points (invoked in succession) that modify system state in a particular way.
 
 
 #General Concepts
 * **TestSuite**:
- A *TestSuite* is collection of *TestCases*. The idea is to group related 'test cases' together. Global variables that need to be shared across the test cases can be declared as part of the test suite.
+ A *TestSuite* is collection of *TestCases*. The idea is to group related 'test cases' together.
 
 ```
 {
@@ -49,10 +53,10 @@ Note: As of now RESTTest only supports APIs that don't require explicit authenti
    },
    "testSteps":[
       {
-         ...
+         ... each TestStep is specified in here
       },
       {
-         ...
+         ...  each TestStep is specified in here
       }
     ]
  ```
@@ -63,7 +67,7 @@ For a more complete list of all the options, please see.
 
 A TestStep contains the following -
 
-- **API invocation** - As part of the API invocation, you are expected to supply the following minimal params -
+- **API end point invocation** - As part of the API endpoint invocation, you are expected to supply the following minimal params -
   - URL
   - URL params
   - HTTP method - get, put, post, delete ('get' is used by default)
@@ -75,16 +79,18 @@ Example of a TestStep:
 
   ```
   testSteps: [
+    {
        "name":"Name of TestStep",
-  		"apiUrl":"http://example/api/v1/helloworld/print",
-         "assertMap":{
+  		   "apiUrl":"http://example/api/v1/helloworld/print",
+       "assertMap":{
              "headers":{
                  "content-type":"application/json; charset=utf-8"
              }
              "payLoad":{
                 "message":"Hello World!"
              }
-         }
+       }
+    }    
   ]
   ```
 
