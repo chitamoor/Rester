@@ -8,7 +8,7 @@ RESTTest allows you to test your APIs using a non-programatic or non-GUI based a
 Testing RESTful APIs generally involves two prediticable steps -
 
 - Invoke the API end point
-- Validate the response - header, payload etc
+- Validate the response - headers, payload etc
 
 Most testing tools available for testing RESTful APIs use some sort of a GUI based approach which doesn't lend itself towards re-use, better code organization, abstraction etc and some of the other benefits that are generally available with more programmatic frameworks like JUnit. Programmatically building test cases provides the highest level of flexibility and sophistication, but the downside to this approach is that it ends up with lots of fairly tedious and repetitive code. Conceptually, RESTTest is similar to existing unit testing frameworks, but it uses JSON (instead of a programming language) to implement/specify the actual tests. It can be used by programmers and non-programmers alike, but reap all the benefits of a unittesting framework.
 
