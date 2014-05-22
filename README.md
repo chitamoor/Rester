@@ -101,7 +101,7 @@ Example of a TestStep:
 Clone the repo and get started!
 The main class is testapi.py
 
-#RESTTest Invocation Patterns
+#RESTTest command line options
 - Run the default test case -
 
   `python apirunner.py`
@@ -137,6 +137,63 @@ All the results are directed to the console by default. You can control the leve
 
 #Organizing the tests
 
+#Examples of API request invocations 
+- Specify the HTTP headers as part of an API request 
+ ```
+  testSteps: [
+    {
+       "name":"Name of TestStep",
+  		   "apiUrl":"http://example/api/v1/helloworld/print",
+  		   "headers":{
+            "content-type":"application/json;"
+       },
+       ....
+    }    
+  ]
+  ```
+
+- Specify the URL params as part of an API request 
+  Two ways to specific URL params
+  
+  ```
+  testSteps: [
+    {
+       "name":"Name of TestStep",
+  		   "apiUrl":"http://example/api/v1/helloworld/print",
+       "params":{
+            "param_1":"value1", 
+            "param_2":"value2"
+       },
+       ....
+    }    
+  ]
+  ```
+
+
+   ```
+  testSteps: [
+    {
+       "name":"Name of TestStep",
+  		   "apiUrl":"http://example/api/v1/helloworld/print?param_1=value1&param_2=value2",
+       ....
+    }    
+  ]
+  ```
+
+# Re-using declarations
+- Variables are declared in the "globals" section of the TestSuite
+  ```
+   "globals":{
+      "variables":{
+        "baseApiUrl":"https://api.prevoty.com",
+        "api_key":"YOUR_KEY",
+        "rule_key":"CONFIG_KEY"
+      }
+   },
+   ... 
+   ```
+  
+
 #TODO
 - Create a package support and PyPi distributable
 - Unit Tests
@@ -148,6 +205,6 @@ All the results are directed to the console by default. You can control the leve
 - Supoport for JSON schema validation
 - Support for enums
 - Support for OAuth/authentication
-- YAML format for specifying the tests
+- Experiment with YAML format for specifying the tests
 
 
