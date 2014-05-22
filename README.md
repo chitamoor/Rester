@@ -67,10 +67,13 @@ For a more complete list of all the options, please see.
 
 A TestStep contains the following -
 
-- **API end point invocation** - As part of the API endpoint invocation, you are expected to supply the following minimal params -
+- **API end point invocation** - As part of the API endpoint invocation, you can provide the following params -
   - URL
+  - HTTP headers
   - URL params
   - HTTP method - get, put, post, delete ('get' is used by default)
+  
+  URL is the only mandatory param.
 
 - A series of assert statements specified as part of an **AssertMap**
 - Post step assignments
