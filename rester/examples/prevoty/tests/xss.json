@@ -3,8 +3,9 @@
    "globals":{
       "variables":{
         "baseApiUrl":"https://api.prevoty.com",
-        "api_key":"YOUR_KEY",
-        "rule_key":"CONFIG_KEY"
+        "api_key":"82ddb7e2-883c-4290-83f7-d15a8ba4aa7e",
+        "rule_key":"108ee29a-a2cb-49ec-b053-2e82f198ce08",
+        "expected_value":2
       }
    },
    "testSteps":[
@@ -14,15 +15,17 @@
          "skip":"True",
          "apiUrl":"{baseApiUrl}/1/key/verify?api_key={api_key}",
          "assertMap": {
-            "verified":true,
-            "message":"api_key is valid"
+            "payLoad":{
+              "verified":true,
+              "message":"api_key is valid"
+            }
          }
       },
       {
          "name":"XSS Basic test",
          "apiUrl":"{baseApiUrl}/1/xss/filter",
          "headers":{
-            "content-type":"application/json"
+            "content-type":"application/json;"
          },
          "method":"post",
          "params":{
@@ -30,11 +33,16 @@
             "input":"<script>Hello World!</script>",
             "rule_key":"{rule_key}"
          },
-         "assertMap": {
-              "message":"",
-              "output":"Hello World!",
-              "statistics.javascript_tags":2,
-              "statistics.transformations":2
+         "assertMap":{
+              "headers":{
+                "content-type":"application/json; charset=utf-8"
+              },
+              "payLoad":{
+                "message":"",
+                "output":"Hello World!",
+                "statistics.javascript_tags":"-ge {expected_value}",
+                "statistics.transformations":"-gt 3"
+              }
          }
       }
    ]

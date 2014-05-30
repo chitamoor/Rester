@@ -1,0 +1,20 @@
+from distutils.core import setup
+
+setup(name='Rester',
+    version='0.5.0',
+    author='Rajeev Chitamoor',
+    author_email='rajeev@chitamoor.com',
+    url='https://github.com/chitamoor/rester',
+    license='LICENSE.txt',
+    packages=['rester'],
+    data_files=[('examples')],
+    test_suite="test",
+    description='Rest API Testing',
+    long_description=open('README').read(),
+    install_requires=["requests"],
+)
+
+# next steps
+# create dir structure and make sure the package is correct
+# ensure the tests can run
+# build the package and test import

@@ -2,14 +2,7 @@ import json
 import requests
 import re
 import logging
-
-# TODO
-# Better exception handling
-# - Aggregate results and print summary
-#    - Clean up output
-# - Other command line options
-#   - just dump output
-#   - dump to an output file
+import re
 
 
 class JsonWrapper(object):
@@ -34,6 +27,7 @@ class JsonWrapper(object):
     def __setattr__(self, key, value):
         self.__dict__[key] = JsonWrapper(value) if isinstance(value, dict) else value
 
+
     def items(self):
         return self.__dict__
 
@@ -41,6 +35,28 @@ class JsonResponseWrapper(object):
     def __init__(self, json, headers):
         self.json_wrapper = JsonWrapper(json)
         self.headers = JsonWrapper(headers)
+
+
+# Module level functions
+def is_string(expression):
+    #self.logger.debug(" _is_string : %s ", type(expression))
+    return expression and (isinstance(expression, unicode) or isinstance(expression, str))
+
+
+def is_number(expression):
+    if is_string(expression):
+        expression = expression.strip()
+        num_format = re.compile("^[-+]?[0-9]*\.?[0-9]*$")
+        return re.match(num_format, expression)
+
+def check_for_logical_op(expression):
+    if is_string(expression):
+        #self.logger.debug("_check_for_logical_op : expression %s", expression)
+        oprtr_regex = re.compile("-lt|-le|-gt|-ge|-eq|-ne")
+        match = re.match(oprtr_regex, expression)
+        if match:
+            return match.group()
+
 
 class ApiTestCaseRunner:
 
@@ -53,7 +69,7 @@ class ApiTestCaseRunner:
 
     def run_test_suite(self, test_suite_file_name):
         test_suite = self._process_test_file(test_suite_file_name)
-        for test_case_file_name in test_suite.tests:
+        for test_case_file_name in test_suite.test_cases:
             print "test case : " + test_case_file_name
             self.run_test_case(test_case_file_name)
 
@@ -65,9 +81,14 @@ class ApiTestCaseRunner:
     def display_report(self):
         self.logger.info("\n\n ############################ TEST RESULTS ############################")
         for test_case in self._test_cases:
-            self.logger.info('\n\n ===> TestCase  name : %s, status : %s', test_case.name, "Passed" if test_case.passed == True else "Failed!")
+            print "\n\n ===> TestCase : {0}, status : {1}".format(test_case.name, "Passed" if test_case.passed == True else "Failed!")
             for test_step in test_case.testSteps:
-                self.logger.info('\n     ====> Test Step name : %s, status : %s, message : %s', test_step.name, test_step.result.status, test_step.result.message)
+                #self.logger.info('\n     ====> Test Step name : %s, status : %s, message : %s', test_step.name, test_step.result.status, test_step.result.message)
+                print "\n\n     ====> Test Step : {0}".format(test_step.name)
+                if hasattr(test_step, 'assertResults'):
+                    for assert_result in test_step.assertResults:
+                        #self.logger.debug('\n assert_result : ' + str(assert_result))
+                        print "\n        ---> {0}".format(assert_result['message'])
 
     def _process_test_file(self, test_file):
         with open(test_file) as file:
@@ -102,12 +123,14 @@ class ApiTestCaseRunner:
             method = test_step.method if hasattr(
                 test_step, 'method') else "get"
 
+            # process and set up headers
             headers = {}
             if hasattr(test_step, 'headers') and test_step.headers is not None:
                 self.logger.debug('Found Headers')
                 for key, value in test_step.headers.items().items():
                     headers[key] = self._evaluate_expression(value)
 
+            # process and set up params
             params = {}
             if hasattr(test_step, 'params') and test_step.params is not None:
                 self.logger.debug('Found params')
@@ -125,11 +148,11 @@ class ApiTestCaseRunner:
                 assertMap = test_step.assertMap
                 if hasattr(assertMap, "headers"):
                     self.logger.debug('Evaluating Response headers : ' + str(json_response_wrapper.headers))
-                    self._asset_element_list(test_step, json_response_wrapper.headers, test_step.assertMap.headers.items().items())
+                    self._assert_element_list(test_step, json_response_wrapper.headers, test_step.assertMap.headers.items().items())
 
                 if hasattr(assertMap, "payLoad"):
                     self.logger.debug('Evaluating Response Payload')
-                    self._asset_element_list(test_step, json_response_wrapper.json_wrapper, test_step.assertMap.payLoad.items().items())
+                    self._assert_element_list(test_step, json_response_wrapper.json_wrapper, test_step.assertMap.payLoad.items().items())
 
             if test_case.passed == True:
                 test_case.passed = test_step.result.status
@@ -140,24 +163,65 @@ class ApiTestCaseRunner:
                         \n !!! Will ignore all assignment statements as part of TestStep', test_step.name, inst)
             test_step.result = {"status": False, "message": inst}
 
-    def _asset_element_list(self, test_step, target_response, assert_list):
+    def _assert_element_list(self, test_step, target_response, assert_list):
         self.logger.debug("Inside assert_element_list : " + str(target_response))
+
+        test_step.assertResults = []
+
         for key, value in assert_list:
             self.logger.debug('key : %s, value : %s', key, value)
 
             json_eval_expr = getattr(target_response, key, '')
+
+            if is_number(json_eval_expr):
+                json_eval_expr = float(json_eval_expr)
+
             self.logger.debug('json_eval_expr : %s ', json_eval_expr)
 
-            if json_eval_expr != value:
-                assert_message = 'Assert Failed!!! for key : %s, json_eval_expr : %s,\
-                assert_msg : %s', key, json_eval_expr, value
-                self.logger.error('%s', assert_message)
-                test_step.result = {
-                    "status": False, "message": assert_message}
+            # Check for logical operators
+            logic_ops = {'-gt':'>', '-ge':'>=', '-lt':'<', '-le':'<=', '-ne':'!=', '-eq':'=='}
+            lg_op_expr = check_for_logical_op(value)
+            if lg_op_expr:
+                self.logger.debug("---> Found lg_op_expr : " + lg_op_expr)
+
+            if lg_op_expr and logic_ops.has_key(lg_op_expr):
+                final_lg_op = logic_ops[lg_op_expr]
+                value_segs = value.split(lg_op_expr)
+                rest_of_value_expr = ('').join(value_segs)
+                value = rest_of_value_expr
+                self.logger.debug("     -----> Rest of the expression : " + value)
             else:
-                assert_message = 'Assert Passed! for key : %s, json_eval_expr : %s,\
-                assert_msg : %s', key, json_eval_expr, value
+                # - If no operators found then assume '=='
+                final_lg_op = logic_ops['-eq']
+
+            self.logger.debug("---> Final final_lg_op : " + final_lg_op)
+
+            value = self._evaluate_expression(value)
+            self.logger.debug(' ---> final evaluated expression  : %s and type %s ', value, type(value))
+
+            # construct the logical assert expression
+            assert_expr = 'json_eval_expr {0} value'.format(final_lg_op)
+            assert_literal_expr = '"{0} {1} {2}"'.format(json_eval_expr, final_lg_op, value)
+
+            self.logger.debug('     ---> Assert_expr : ' + assert_expr)
+
+            assert_result = eval(assert_expr)
+
+            self.logger.debug('assert evaluation result  : %s', assert_result)
+
+
+            if not assert_result:
+                assert_message = 'Assert Statement : {0}   ---> Fail!!!'.format(assert_literal_expr)
+                self.logger.error('%s', assert_message)
+                test_step.result = {"status": False, "message": assert_message}
+                test_step.assertResults.append({"status": False, "message": assert_message})
+
+            else:
+                assert_message = 'Assert Statement : {0}  ----> Pass!!!'.format(assert_literal_expr)
+                self.logger.info('%s', assert_message)
                 test_step.result = {"status": True, "message": assert_message}
+                test_step.assertResults.append({"status": True, "message": assert_message})
+
 
     def _get_api_json_response_wrapper(self, api_url, method, headers, params, dump_response):
         self.logger.debug(
@@ -198,10 +262,27 @@ class ApiTestCaseRunner:
         #     globalAssertMaps["${name}"] = it.assertMap
         # }
 
-    def _evaluate_expression(self, expression):
-        result = self._pattern.sub(
-            lambda var: self._variables[var.group(1)], expression)
 
+    def _evaluate_expression(self, expression):
+        self.logger.debug("_evaluate_expression : expression %s", str(expression))
+        if not is_string(expression):
+            return expression
+
+        result = self._pattern.sub(
+            lambda var: str(self._variables[var.group(1)]), expression)
+
+        result = result.strip()
         self.logger.debug('_evaluate_expression : %s - result : %s', expression, result)
 
+        if is_number(result):
+            if result.isdigit():
+                self.logger.debug('     _evaluate_expression is integer !!!')
+                return int(result)
+            else:
+                self.logger.debug('     _evaluate_expression is float !!!')
+
+                return float(result)
+
         return result
+
+

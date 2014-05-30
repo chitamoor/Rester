@@ -25,11 +25,11 @@ if (__name__ == '__main__'):
     test_runner = ApiTestCaseRunner(logger)
     if test_case is not None:
         print "test case has been specified"
-        #test_runner.run_test_case(test_case)
+        test_runner.run_test_case(test_case)
     elif test_suite is not None:
         print "test suite has been specified"
         test_runner.run_test_suite(test_suite)
     else:
         print "running the default test case"
-        #test_runner.run_test_case(DEFAULT_TEST_CASE)
+        test_runner.run_test_case(DEFAULT_TEST_CASE)
     test_runner.display_report()
