@@ -2,7 +2,7 @@ Rester
 ========
 Framework for testing RESTful APIs
 ----------------------------------
-Rester allows you to test your APIs using a non-programatic or non-GUI based approach (which are some of the more conventional ways of testing RESTFul APIs). *Rester* is inspired by various unit testing frameworks like JUnit, 'unittest' (python) etc and is conceptually organized like those frameworks but is geared towards testing RESTful API endpoints. With *Rester*, all tests are specified in JSON, so it can also be used by non-programmers as well. 
+Rester allows you to test your APIs using a non-programatic or non-GUI based approach (which are some of the more conventional ways of testing RESTFul APIs). *Rester* is inspired by various unit testing frameworks like JUnit, 'unittest' (python) etc and is conceptually organized like those frameworks but is geared towards testing RESTful API endpoints. With *Rester*, all tests are specified in JSON, so it can also be used by non-programmers as well.
 
 #So, why Rester?
 Testing RESTful APIs generally involves two prediticable steps -
@@ -17,12 +17,12 @@ Note: As of now Rester only supports APIs that don't require explicit authentica
 
 #Practical uses of Rester
 - Perform "integration" testing of internal and external RESTful API endpoints
-- Examine and test complex response payloads 
+- Examine and test complex response payloads
 - You can simply use Rester to dump and analyze API responses - headers, payload etc.
 
 #Assumptions
 - Rester does not manage the life-cycle of the container or the server that exposes the API endpoints, but assumes the API endpoints (to be tested) are up and avaliable.
-- Unlike other unittesting frameworks however, Rester does guarantee the order of execution of the **TestSteps** within a **TestCase**. For a better understanding of TestSteps and TestCases see the "General Concepts" section below. The **ordering** will come in hands if you want to test a series of API end-points (invoked in succession) that modify system state in a particular way.
+- Unlike other unittesting frameworks however, Rester does guarantee the order of execution of the **TestSteps** within a **TestCase**. For a better understanding of TestSteps and TestCases see the "General Concepts" section below. The **ordering** will come in handy if you want to test a series of API end-points (invoked in succession) that modify system state in a particular way.
 
 
 #General Concepts
@@ -33,7 +33,7 @@ Note: As of now Rester only supports APIs that don't require explicit authentica
 ```
 {
    "test_cases":[
-                 "test_case_1.json", 
+                 "test_case_1.json",
                  "test_case_2.json"
                 ]
 }
@@ -73,7 +73,7 @@ A TestStep contains the following -
   - HTTP headers
   - URL params
   - HTTP method - get, put, post, delete ('get' is used by default)
-  
+
   URL is the only mandatory param.
 
 - A series of assert statements specified as part of an **AssertMap**
@@ -94,16 +94,12 @@ Example of a TestStep:
                 "message":"Hello World!"
              }
        }
-    }    
+    }
   ]
   ```
 
-#Pre-reqs/Dependencies
-* requests - pip install requests
-
 #Installation
-Clone the repo and get started!
-The main class is testapi.py
+pip install rester
 
 #Rester command line options
 - Run the default test case -
@@ -131,18 +127,14 @@ The main class is testapi.py
 
 - Just dump the JSON output
 
-#Interpreting the results
-All the results are directed to the console by default. You can control the level of output by specifying the --log command line option. You can direct the output to a file using the --opfile command line option.
 
 #TestCase options
 - **Skipping tests**
 
 #TestStep options
 
-#Organizing the tests
-
-#Examples of API request invocations 
-- Specify the HTTP headers as part of an API request 
+#Examples of API request invocations
+- Specify the HTTP headers as part of an API request
  ```
   testSteps: [
     {
@@ -152,13 +144,13 @@ All the results are directed to the console by default. You can control the leve
             "content-type":"application/json;"
        },
        ....
-    }    
+    }
   ]
   ```
 
-- Specify the URL params as part of an API request. 
-  There are two ways to specific URL params, which are mentioned below - 
-  
+- Specify the URL params as part of an API request.
+  There are two ways to specific URL params, which are mentioned below -
+
   ```
   testSteps: [
     {
@@ -168,11 +160,11 @@ All the results are directed to the console by default. You can control the leve
   		      ...
        },
        "params":{
-            "param_1":"value1", 
+            "param_1":"value1",
             "param_2":"value2"
        },
        ....
-    }    
+    }
   ]
   ```
 
@@ -180,36 +172,123 @@ All the results are directed to the console by default. You can control the leve
    ```
   testSteps: [
     {
-       "name":"Name of TestStep",
+      "name":"Name of TestStep",
   		"apiUrl":"http://example/api/v1/helloworld/print?param_1=value1&param_2=value2",
        ....
-    }    
+    }
   ]
   ```
 
-# Re-using declarations
+- Perform an HTTP POST
+  ```
+  testSteps: [
+    {
+        "name":"Name of TestStep",
+        "apiUrl":"http://example/api/v1/helloworld/print",
+        "headers":{
+            ...
+        },
+        "method":"post"
+        "params":{
+            "param_1":"value1",
+            "param_2":"value2"
+        },
+       ....
+    }
+  ]
+  ```
+
+#Examples of assert statements
+As mentioned previously, all of the assert statements are specified within an **assertMap** element
+
+- Assert "content-type" HTTP header
+ ```
+  testSteps: [
+    {
+      "name":"Name of TestStep",
+      "apiUrl":"http://example/api/v1/helloworld/print?param_1=value1&param_2=value2",
+       ....
+    }
+
+    "assertMap":{
+
+        "headers":{
+          "content-type":"application/json; charset=utf-8"
+        },
+
+        ....
+
+    }
+  ]
+
+- Assert specific payload elements -
+  "output.level" is 2
+  "output.result" is eqal to "Message Success"
+  "output.status" is greater than 3
+
+ ```
+  testSteps: [
+    {
+      "name":"Name of TestStep",
+      "apiUrl":"http://example/api/v1/helloworld/print?param_1=value1&param_2=value2",
+       ....
+    }
+
+    "assertMap":{
+        "headers": {
+           ....
+        },
+
+        "payLoad":{
+            "output.level":2,
+            "output.result":"Message Success",
+            "output.status":"-gt 3",
+        },
+        ....
+
+    }
+  ]
+  ```
+
+# Assert logical operators:
+
+- ```-gt```  greater than (>)
+- ```-ge```  greater than equal to (>=)
+- ```-lt```  less than (<)
+- ```-le```  less than eqal to (<=)
+- ```-eq```  equal to (==), default operator if none specified
+
+
+# Using variables declarations
 - Variables are declared in the "globals" section of the TestSuite
+
   ```
    "globals":{
       "variables":{
-        "baseApiUrl":"https://api.prevoty.com",
+        "baseApiUrl":"https://example.com",
         "api_key":"YOUR_KEY",
         "rule_key":"CONFIG_KEY"
       }
    },
-   ... 
+   ...
+ ```
+  testSteps: [
+    {
+      "name":"Name of TestStep",
+      "apiUrl":"http://{baseApiUrl}/api/v1/helloworld/print?param_1=value1
+      ....
+    }
+  ]
+
    ```
-  
+
 
 #TODO
 - Unit Tests
 - Plenty of refactoring :-)
-- Support for POSTing JSON payloads
-- Cleaner results summary (Tabular?)
+- Cleaner test results summary (Tabular?)
 - Support for simple datatypes - lists, integers, strings etc
 - Supoport for JSON schema validation
 - Support for enums
 - Support for OAuth
 - Experiment with YAML format for specifying the tests
-
-

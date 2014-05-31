@@ -286,3 +286,9 @@ class ApiTestCaseRunner:
         return result
 
 
+#TODO
+# Support enums
+# Support basic types
+# Make sure skip options work
+# Set up one more API examples
+

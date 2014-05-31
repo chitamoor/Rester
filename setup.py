@@ -1,4 +1,5 @@
-from distutils.core import setup
+#from distutils.core import setup
+from setuptools import setup
 
 setup(name='Rester',
     version='0.5.0',
@@ -7,7 +8,6 @@ setup(name='Rester',
     url='https://github.com/chitamoor/rester',
     license='LICENSE.txt',
     packages=['rester'],
-    data_files=[('examples')],
     test_suite="test",
     description='Rest API Testing',
     long_description=open('README').read(),
