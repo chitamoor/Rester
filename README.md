@@ -254,7 +254,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - ```
   -gt - greater than
+
   e.g. parent.child > 3
+
       "payLoad":{
             "parent.child":"-gt 3",
       }
@@ -262,7 +264,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - ```
   -ge - greater than eqal to
+
   e.g. parent.child >= 3
+
       "payLoad":{
             "parent.child":"-ge 3",
       }
@@ -270,7 +274,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - ```
   -lt - lesser than
+
   e.g. parent.child < 2
+
       "payLoad":{
             "parent.child":"-lt 2",
       }
@@ -278,7 +284,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - ```
   -le - lesser than eqal to
+
   e.g. parent.child <= 2
+
       "payLoad":{
             "parent.child":"-le 2",
       }
@@ -286,7 +294,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - ```
   -ne  - not eqal to
+
   e.g. parent.child.message != "success"
+
       "payLoad":{
             "parent.child.message":"-ne success",
       }
@@ -294,6 +304,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - ```
   -eq -  eqal to
+
   e.g. parent.child.message == "error"
       "payLoad":{
             "parent.child.message":"-eq success",  # either will work
