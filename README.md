@@ -252,8 +252,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 # Assert logical operators:
 
-- ```
-  -gt - greater than
+- **-gt** - greater than
+
+  ```
 
   e.g. parent.child > 3
 
@@ -262,9 +263,9 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
-- ```
-  -ge - greater than eqal to
+- **-ge** - greater than eqal to
 
+  ```
   e.g. parent.child >= 3
 
       "payLoad":{
@@ -272,8 +273,9 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
-- ```
-  -lt - lesser than
+- **-lt** - lesser than
+
+  ```
 
   e.g. parent.child < 2
 
@@ -282,8 +284,9 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
-- ```
-  -le - lesser than eqal to
+- **-le** - lesser than eqal to
+
+  ```
 
   e.g. parent.child <= 2
 
@@ -292,8 +295,9 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
-- ```
-  -ne  - not eqal to
+- **-ne**  - not eqal to
+
+  ```
 
   e.g. parent.child.message != "success"
 
