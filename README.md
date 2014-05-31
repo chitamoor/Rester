@@ -302,9 +302,9 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
-- ```
-  -eq -  eqal to
+- **-eq**  -  eqal to
 
+```
   e.g. parent.child.message == "error"
       "payLoad":{
             "parent.child.message":"-eq success",  # either will work
