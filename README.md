@@ -252,53 +252,48 @@ As mentioned previously, all of the assert statements are specified within an **
 
 # Assert logical operators:
 
-- ```-gt - greater than
-
+- ```
+  -gt - greater than
   e.g. parent.child > 3
       "payLoad":{
             "parent.child":"-gt 3",
       }
-
   ```
 
-- ```-ge - greater than eqal to
-
+- ```
+  -ge - greater than eqal to
   e.g. parent.child >= 3
       "payLoad":{
             "parent.child":"-ge 3",
       }
-
   ```
 
-- ```-lt - lesser than
-
+- ```
+  -lt - lesser than
   e.g. parent.child < 2
       "payLoad":{
             "parent.child":"-lt 2",
       }
-
   ```
 
-- ```-le - lesser than eqal to
-
+- ```
+  -le - lesser than eqal to
   e.g. parent.child <= 2
       "payLoad":{
             "parent.child":"-le 2",
       }
-
   ```
 
-- ```-ne  - not eqal to
-
+- ```
+  -ne  - not eqal to
   e.g. parent.child.message != "success"
       "payLoad":{
             "parent.child.message":"-ne success",
       }
-
   ```
 
-- ```-eq -  eqal to
-
+- ```
+  -eq -  eqal to
   e.g. parent.child.message == "error"
       "payLoad":{
             "parent.child.message":"-eq success",  # either will work
