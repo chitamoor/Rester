@@ -106,14 +106,19 @@ pip install rester
 
   `apirunner`
 
-  This will look for the default test case, ***test_case.json***
-- Run a specific test case - use the command line option ***--tc=<file_name>***
+  This will look for the default test case, ***test_case.json in the current directory***
+- Run a specific test case
+  use the command line option ***--tc=<file_name>***
 
   e.g. invoke a test case specified in the file "./rester/examples/test_case.json"
 
   `apirunner --tc=./rester/examples/test_case.json`
 
 - Run a specific test suite
+  use the command line option ***--ts=<file_name>***
+
+  e.g. invoke a test suite specified in the file "./rester/examples/test_suite.json"
+
   `apirunner --ts=./rester/examples/test_suite.json`
 
 #Other command line options
