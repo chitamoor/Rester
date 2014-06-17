@@ -85,6 +85,10 @@ class ApiTestCaseRunner:
             for test_step in test_case.testSteps:
                 #self.logger.info('\n     ====> Test Step name : %s, status : %s, message : %s', test_step.name, test_step.result.status, test_step.result.message)
                 print "\n\n     ====> Test Step : {0}".format(test_step.name)
+
+                if hasattr(test_step, 'result'):
+                    print "\n\n         ====> {0}!".format(test_step.result.message)
+
                 if hasattr(test_step, 'assertResults'):
                     for assert_result in test_step.assertResults:
                         #self.logger.debug('\n assert_result : ' + str(assert_result))
@@ -104,14 +108,16 @@ class ApiTestCaseRunner:
     def _execute_test_case(self, test_case):
         skip_all_aubsequent_tests = False
         test_case.passed = True
+
         for test_step in test_case.testSteps:
-            self.logger.debug('Test Case Name : %s', test_step.name)
+
+            self.logger.debug('Test Step Name : %s', test_step.name)
+
             test_case.passed = True
             if not skip_all_aubsequent_tests:
                 if hasattr(test_step, 'skip') and test_step.skip == True:
-                    self.logger.info('\n=======> Skipping test case !!!')
-                    test_step.result = {
-                        "status": True, "message": "Skipped!!!"}
+                    self.logger.info('\n=======> Skipping test case : ' + test_step.name + ' !')
+                    test_step.result = {"status": True, "message": "Skipped"}
                 else:
                     self._execute_test_step(test_case, test_step)
 
@@ -211,13 +217,13 @@ class ApiTestCaseRunner:
 
 
             if not assert_result:
-                assert_message = 'Assert Statement : {0}   ---> Fail!!!'.format(assert_literal_expr)
+                assert_message = 'Assert Statement : {0}   ---> Fail!'.format(assert_literal_expr)
                 self.logger.error('%s', assert_message)
                 test_step.result = {"status": False, "message": assert_message}
                 test_step.assertResults.append({"status": False, "message": assert_message})
 
             else:
-                assert_message = 'Assert Statement : {0}  ----> Pass!!!'.format(assert_literal_expr)
+                assert_message = 'Assert Statement : {0}  ----> Pass!'.format(assert_literal_expr)
                 self.logger.info('%s', assert_message)
                 test_step.result = {"status": True, "message": assert_message}
                 test_step.assertResults.append({"status": True, "message": assert_message})
@@ -289,6 +295,5 @@ class ApiTestCaseRunner:
 #TODO
 # Support enums
 # Support basic types
-# Make sure skip options work
 # Set up one more API examples
 

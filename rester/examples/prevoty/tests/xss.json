@@ -11,8 +11,8 @@
    "testSteps":[
       {
          "name":"Prevoty Key Verification",
-         "dumpResponse":"yes",
-         "skip":"True",
+         "dumpResponse":true,
+         "skip":false,
          "apiUrl":"{baseApiUrl}/1/key/verify?api_key={api_key}",
          "assertMap": {
             "payLoad":{

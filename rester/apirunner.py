@@ -15,7 +15,7 @@ def parse_cmdln_args():
     args = parser.parse_args()
     return (args.log.upper(), args.tc, args.ts)
 
-if (__name__ == '__main__'):
+def run():
     log_level, test_case, test_suite = parse_cmdln_args()
     print log_level, test_case, test_suite
     logging.basicConfig()
@@ -33,3 +33,7 @@ if (__name__ == '__main__'):
         print "running the default test case"
         test_runner.run_test_case(DEFAULT_TEST_CASE)
     test_runner.display_report()
+
+if (__name__ == '__main__'):
+    run()
+

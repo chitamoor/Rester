@@ -104,17 +104,17 @@ pip install rester
 #Rester command line options
 - Run the default test case -
 
-  `python apirunner.py`
+  `apirunner`
 
   This will look for the default test case, ***test_case.json***
 - Run a specific test case - use the command line option ***--tc=<file_name>***
 
-  e.g. invoke a test case specified in the file "test_case.json"
+  e.g. invoke a test case specified in the file "./rester/examples/test_case.json"
 
-  `python apirunner.py --tc=test_case.json`
+  `apirunner --tc=./rester/examples/test_case.json`
 
 - Run a specific test suite
-  `python apirunner.py --ts=test_suite.json`
+  `apirunner --ts=./rester/examples/test_suite.json`
 
 #Other command line options
 - Adjust the log output or details
@@ -123,10 +123,9 @@ pip install rester
 
   e.g. run the API with INFO level
 
-  `python apirunner.py  --log=INFO`
+  `apirunner  --log=INFO`
 
 - Just dump the JSON output
-
 
 #TestCase options
 - **Skipping tests**
