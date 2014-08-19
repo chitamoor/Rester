@@ -323,26 +323,25 @@ As mentioned previously, all of the assert statements are specified within an **
 # Basic JSON Type checking
 ## The following JSON types are supported - Integer, Float, String, Array, Boolean
 
-  ```
-  e.g. check if parent.child.message is a String
-
-      "payLoad":{
+-  check if parent.child.message is a String
+```
+       "payLoad":{
             "parent.child.message":"String",
       }
+```
 
-e.g. check if parent.child.version is an Integer
-
+- check if parent.child.version is an Integer
+```
       "payLoad":{
             "parent.child.version":"Integer",
       }
+```
 
-e.g. check if parent.child is an Object
-
+- check if parent.child is an Object
+```
       "payLoad":{
             "parent.child":"Object",
       }
-
-
   ```
 
 
