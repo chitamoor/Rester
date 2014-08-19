@@ -320,6 +320,31 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
+# Basic JSON Type checking
+## The following JSON types are supported - Integer, Float, String, Array, Boolean
+
+  ```
+  e.g. check if parent.child.message is a String
+
+      "payLoad":{
+            "parent.child.message":"String",
+      }
+
+e.g. check if parent.child.version is an Integer
+
+      "payLoad":{
+            "parent.child.version":"Integer",
+      }
+
+e.g. check if parent.child is an Object
+
+      "payLoad":{
+            "parent.child":"Object",
+      }
+
+
+  ```
+
 
 # Using variables declarations
 - Variables are declared in the "globals" section of the TestSuite
@@ -346,10 +371,9 @@ As mentioned previously, all of the assert statements are specified within an **
 
 #TODO
 - Unit Tests
-- Plenty of refactoring :-)
+- Plenty of refactoring :-). Make it more pythonic for starters
 - Cleaner test results summary (Tabular?)
-- Support for simple datatypes - lists, integers, strings etc
-- Supoport for JSON schema validation
+- Better support for assert expressions
 - Support for enums
 - Support for OAuth
 - Experiment with YAML format for specifying the tests
