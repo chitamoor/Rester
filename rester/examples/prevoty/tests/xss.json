@@ -40,8 +40,11 @@
               "payLoad":{
                 "message":"",
                 "output":"Hello World!",
+                "output":"String",
                 "statistics.javascript_tags":"-ge {expected_value}",
-                "statistics.transformations":"-gt 3"
+                "statistics.transformations":"int",
+                "statistics.transformations":"-gt 3",
+                "statistics.prevoty_link_metadata":"Object"
               }
          }
       }

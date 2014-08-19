@@ -22,7 +22,7 @@ class JsonWrapper(object):
             return getattr(self.__dict__[curr_level], '.'.join(levels))
         else:
             #print "name : " + name
-            return self.__dict__[name]
+            return self.__dict__[name] # if name in self.__dict__ else None
 
     def __setattr__(self, key, value):
         self.__dict__[key] = JsonWrapper(value) if isinstance(value, dict) else value
@@ -123,11 +123,9 @@ class ApiTestCaseRunner:
 
     def _execute_test_step(self, test_case, test_step):
         try:
-            self.logger.debug(
-                '\n=======> Executing TestStep : %s ', test_step.name)
-
-            method = test_step.method if hasattr(
-                test_step, 'method') else "get"
+            method = test_step.method if test_step.method else "get"
+            self.logger.info(
+                '\n=======> Executing TestStep : %s, method : %s', test_step.name, method)
 
             # process and set up headers
             headers = {}
@@ -170,19 +168,37 @@ class ApiTestCaseRunner:
             test_step.result = {"status": False, "message": inst}
 
     def _assert_element_list(self, test_step, target_response, assert_list):
-        self.logger.debug("Inside assert_element_list : " + str(target_response))
+        self.logger.info("Inside assert_element_list")
 
         test_step.assertResults = []
 
         for key, value in assert_list:
             self.logger.debug('key : %s, value : %s', key, value)
-
             json_eval_expr = getattr(target_response, key, '')
+            if json_eval_expr is None:
+                assert_message = 'key %s not found in target response', key
+                self.logger.error('%s', assert_message)
+                test_step.result = {"status": False, "message": assert_message}
+                test_step.assertResults.append({"status": False, "message": assert_message})
+                continue
 
-            if is_number(json_eval_expr):
-                json_eval_expr = float(json_eval_expr)
+            self.logger.info('---> json_eval_expr : %s and type : %s', json_eval_expr, type(json_eval_expr))
 
-            self.logger.debug('json_eval_expr : %s ', json_eval_expr)
+            # check for basic JSON types
+            json_types = {'Integer':'int', 'String':'str', 'Array':'list', 'Float':'float', 'Boolean':'bool', 'Object':'dict'}
+            if value in json_types:
+                self.logger.info('Found json type : %s ', value)
+
+                if type(json_eval_expr) == JsonWrapper:
+                    value = 'Object'
+                    json_eval_expr = {}
+
+                if type(json_eval_expr) == unicode:
+                    json_eval_expr = ''
+
+                value = eval(json_types[value])
+                json_eval_expr = type(json_eval_expr)
+
 
             # Check for logical operators
             logic_ops = {'-gt':'>', '-ge':'>=', '-lt':'<', '-le':'<=', '-ne':'!=', '-eq':'=='}
@@ -221,7 +237,6 @@ class ApiTestCaseRunner:
                 self.logger.error('%s', assert_message)
                 test_step.result = {"status": False, "message": assert_message}
                 test_step.assertResults.append({"status": False, "message": assert_message})
-
             else:
                 assert_message = 'Assert Statement : {0}  ----> Pass!'.format(assert_literal_expr)
                 self.logger.info('%s', assert_message)
@@ -237,6 +252,7 @@ class ApiTestCaseRunner:
             json_response = getattr(requests, method)(api_url, headers=headers, params=params)
         else:
             self.logger.error('undefined HTTP method!!! %s', method)
+            return None
 
         if dump_response:
             self.logger.info('JSON response Headers -  %s' + str(json_response.headers))
@@ -286,7 +302,6 @@ class ApiTestCaseRunner:
                 return int(result)
             else:
                 self.logger.debug('     _evaluate_expression is float !!!')
-
                 return float(result)
 
         return result
