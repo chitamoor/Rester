@@ -3,6 +3,8 @@ import requests
 import re
 import logging
 import re
+import os
+import yaml
 
 
 class JsonWrapper(object):
@@ -52,7 +54,7 @@ def is_number(expression):
 def check_for_logical_op(expression):
     if is_string(expression):
         #self.logger.debug("_check_for_logical_op : expression %s", expression)
-        oprtr_regex = re.compile("-lt|-le|-gt|-ge|-eq|-ne")
+        oprtr_regex = re.compile("-lt|-le|-gt|-ge|-eq|-ne|exec")
         match = re.match(oprtr_regex, expression)
         if match:
             return match.group()
@@ -70,6 +72,7 @@ class ApiTestCaseRunner:
     def run_test_suite(self, test_suite_file_name):
         test_suite = self._process_test_file(test_suite_file_name)
         for test_case_file_name in test_suite.test_cases:
+            test_case_file_name = os.path.join(os.path.dirname(test_suite_file_name), test_case_file_name)
             print "test case : " + test_case_file_name
             self.run_test_case(test_case_file_name)
 
@@ -95,9 +98,9 @@ class ApiTestCaseRunner:
                         print "\n        ---> {0}".format(assert_result['message'])
 
     def _process_test_file(self, test_file):
-        with open(test_file) as file:
+        with open(test_file) as fh:
             self.logger.info('Processing test file %s', test_file)
-            json_data = json.load(file)
+            json_data = load(test_file, fh)
             return JsonWrapper(json_data)
 
     def _process_config(self, test_case):
@@ -201,16 +204,14 @@ class ApiTestCaseRunner:
 
 
             # Check for logical operators
-            logic_ops = {'-gt':'>', '-ge':'>=', '-lt':'<', '-le':'<=', '-ne':'!=', '-eq':'=='}
+            logic_ops = {'-gt':'>', '-ge':'>=', '-lt':'<', '-le':'<=', '-ne':'!=', '-eq':'==', 'exec': 'exec'}
             lg_op_expr = check_for_logical_op(value)
             if lg_op_expr:
                 self.logger.debug("---> Found lg_op_expr : " + lg_op_expr)
 
             if lg_op_expr and logic_ops.has_key(lg_op_expr):
                 final_lg_op = logic_ops[lg_op_expr]
-                value_segs = value.split(lg_op_expr)
-                rest_of_value_expr = ('').join(value_segs)
-                value = rest_of_value_expr
+                value = value[len(lg_op_expr):]
                 self.logger.debug("     -----> Rest of the expression : " + value)
             else:
                 # - If no operators found then assume '=='
@@ -218,16 +219,22 @@ class ApiTestCaseRunner:
 
             self.logger.debug("---> Final final_lg_op : " + final_lg_op)
 
+            # do variable expansion...
             value = self._evaluate_expression(value)
             self.logger.debug(' ---> final evaluated expression  : %s and type %s ', value, type(value))
 
             # construct the logical assert expression
-            assert_expr = 'json_eval_expr {0} value'.format(final_lg_op)
-            assert_literal_expr = '"{0} {1} {2}"'.format(json_eval_expr, final_lg_op, value)
+            if final_lg_op != 'exec':
+                assert_expr = 'json_eval_expr {0} value'.format(final_lg_op)
+                assert_literal_expr = '"{0} {1} {2}"'.format(json_eval_expr, final_lg_op, value)
+                self.logger.debug('     ---> Assert_expr : ' + assert_expr)
+                assert_result = eval(assert_expr)
+            else:
+                assert_expr = 'exec_result = {0}'.format(value)
+                assert_literal_expr = '"f({0}) <- {1}"'.format(json_eval_expr, value)
+                exec(assert_expr)
+                assert_result = _evaluate(value, json_eval_expr)
 
-            self.logger.debug('     ---> Assert_expr : ' + assert_expr)
-
-            assert_result = eval(assert_expr)
 
             self.logger.debug('assert evaluation result  : %s', assert_result)
 
@@ -245,23 +252,28 @@ class ApiTestCaseRunner:
 
 
     def _get_api_json_response_wrapper(self, api_url, method, headers, params, dump_response):
+        is_raw = params.pop('__raw__', False)
         self.logger.debug(
             '\n Invoking REST Call... api_url: %s, method: %s : ', api_url, method)
         allowed_methods = ["get", "post", "put", "delete"]
         if method in allowed_methods:
-            json_response = getattr(requests, method)(api_url, headers=headers, params=params)
+            response = getattr(requests, method)(api_url, headers=headers, params=params, verify=False)
         else:
             self.logger.error('undefined HTTP method!!! %s', method)
             return None
 
+        if is_raw:
+            payload = {"__raw__": response.text}
+        else:
+            payload = response.json()
+        
         if dump_response:
-            self.logger.info('JSON response Headers -  %s' + str(json_response.headers))
+            self.logger.info('JSON response Headers -  %s' + str(response.headers))
             self.logger.info('JSON response -  %s' + json.dumps(
-                json_response.json(), sort_keys=True, indent=2))
+                payload, sort_keys=True, indent=2))
 
-        if json_response.status_code is 200:
-            #return JsonWrapper(json_response.json())
-            return JsonResponseWrapper(json_response.json(), json_response.headers)
+        if response.status_code is 200:
+            return JsonResponseWrapper(payload, response.headers)
         else:
             return None
 
@@ -306,6 +318,17 @@ class ApiTestCaseRunner:
 
         return result
 
+def load(filename, fh):
+    if filename.endswith(".yaml"):
+        return yaml.load(fh.read())
+    return json.load(fh)
+
+
+def _evaluate(clause, value):
+    assert_expr = 'result = {0}'.format(clause)
+    #self.logger.debug('     ---> Assert_exec : ' + assert_expr)
+    exec(assert_expr)
+    return result
 
 #TODO
 # Support enums
