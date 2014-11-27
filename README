@@ -313,7 +313,7 @@ As mentioned previously, all of the assert statements are specified within an **
 - **-eq**  -  eqal to
 
 ```
-  e.g. parent.child.message == "error"
+  e.g. parent.child.message == "success"
       "payLoad":{
             "parent.child.message":"-eq success",  # either will work
             "parent.child.message":"success",
@@ -359,19 +359,21 @@ As mentioned previously, all of the assert statements are specified within an **
       }
 ```
 
-- For the above payload, verify that "entries" is an Array element
+- For the above payload, verify that **entries** is an Array element
+```
        "payLoad":{
             "entries":"Array"
       }
+```
 
-- Verify the length of the "entries" Array element
+- Verify the length of the **entries** Array element
 ```
        "payLoad":{
             "entries._length":3,
       }
 ```
 
-- Verify the first and the second element of the "entries" Array element
+- Verify the first and the second element of the **entries** Array element
 ```
        "payLoad":{
             "entries[0].id":1,
