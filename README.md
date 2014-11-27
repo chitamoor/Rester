@@ -1,8 +1,22 @@
-Rester
+Rester  + YAML + Exec + ... + More to come.
 =======
-Framework for testing RESTful APIs
+
+This is a *heavily modified fork* of the very good
+https://github.com/chitamoor/Rester project, currently under heavy
+development. If you're a web platform developer, this is (will be) a
+great framework for declarative testing.
+
+
+Framework for testing (RESTful) APIs
 ----------------------------------
-Rester allows you to test your APIs using a non-programatic or non-GUI based approach (which are some of the more conventional ways of testing RESTFul APIs). *Rester* is inspired by various unit testing frameworks like JUnit, 'unittest' (python) etc and is conceptually organized like those frameworks but is geared towards testing RESTful API endpoints. With *Rester*, all tests are specified in JSON, so it can also be used by non-programmers as well.
+Rester allows you to test your APIs using a non-programatic or non-GUI
+based approach (which are some of the more conventional ways of
+testing RESTFul APIs). *Rester* is inspired by various unit testing
+frameworks like JUnit, 'unittest' (python) etc and is conceptually
+organized like those frameworks but is geared towards testing RESTful
+API endpoints. With *Rester*, all tests are specified in YAML or JSON,
+so it can also be used by non-programmers as well.
+
 
 #So, why Rester?
 Testing RESTful APIs generally involves two prediticable steps -
@@ -10,78 +24,97 @@ Testing RESTful APIs generally involves two prediticable steps -
 - Invoke the API end point
 - Validate the response - headers, payload etc
 
-Most testing tools available for testing RESTful APIs use some sort of a GUI based approach which doesn't lend itself towards re-use, better code organization, abstraction etc and some of the other benefits that are generally available with more programmatic frameworks like JUnit. Programmatically building test cases provides the highest level of flexibility and sophistication, but the downside to this approach is that it ends up with lots of fairly tedious and repetitive code. Conceptually, Rester is similar to existing unit testing frameworks, but it uses JSON (instead of a programming language) to implement/specify the actual tests. Programmers and non-programmers can reap the benefits with the Rester approach.
+Most testing tools available for testing RESTful APIs use some sort of
+a GUI based approach which doesn't lend itself towards re-use, better
+code organization, abstraction etc and some of the other benefits that
+are generally available with more programmatic frameworks like
+JUnit. Programmatically building test cases provides the highest level
+of flexibility and sophistication, but the downside to this approach
+is that it ends up with lots of fairly tedious and repetitive
+code. Conceptually, Rester is similar to existing unit testing
+frameworks, but it uses JSON (instead of a programming language) to
+implement/specify the actual tests. Programmers and non-programmers
+can reap the benefits with the Rester approach.
 
+Note: As of now Rester only supports APIs that don't require explicit
+authentication of calls, but future versions will support
+OAuth. Rester was mainly created to test internal APIs that generally
+bypass the need for authentication of the calls.
 
-Note: As of now Rester only supports APIs that don't require explicit authentication of calls, but future versions will support OAuth. Rester was mainly created to test internal APIs that generally bypass the need for authentication of the calls. Also, Rester only supports validation of JSON responses.
 
 #Practical uses of Rester
-- Perform "integration" testing of internal and external RESTful API endpoints
+- Perform "integration" testing of internal and external API endpoints
 - Examine and test complex response payloads
 - You can simply use Rester to dump and analyze API responses - headers, payload etc.
 
 #Assumptions
-- Rester does not manage the life-cycle of the container or the server that exposes the API endpoints, but assumes the API endpoints (to be tested) are up and avaliable.
-- Unlike other unittesting frameworks however, Rester does guarantee the order of execution of the **TestSteps** within a **TestCase**. For a better understanding of TestSteps and TestCases see the "General Concepts" section below. The **ordering** will come in handy if you want to test a series of API end-points (invoked in succession) that modify system state in a particular way.
-
+- Rester does not manage the life-cycle of the container or the server
+  that exposes the API endpoints, but assumes the API endpoints (to be
+  tested) are up and avaliable.
+- Unlike other unittesting frameworks however, Rester does guarantee
+  the order of execution of the **TestSteps** within a
+  **TestCase**. For a better understanding of TestSteps and TestCases
+  see the "General Concepts" section below. The **ordering** will come
+  in handy if you want to test a series of API end-points (invoked in
+  succession) that modify system state in a particular way.
 
 #General Concepts
 
 * **TestSuite**:
- A *TestSuite* is collection of *TestCases*. The idea is to group related 'test cases' together.
+ A *TestSuite* is collection of *TestCases*. The idea is to group
+ related 'test cases' together. Use either YAML or JSON.
+
+Globals can be defined in the either a *TestSuite* or *TestCase*.
 
 ```
-{
-   "test_cases":[
-                 "test_case_1.json",
-                 "test_case_2.json"
-                ]
-}
+globals:
+  variables:
+    request_opts: # special for the request library.
+      verify: false # disable CERT checking for SSL
+    http: "http://localhost:8905"
+    https: "https://localhost:8081"
+test_cases:
+  - servers.yaml
+  - cors.yaml
+  - xdomain.yaml
+  - notfound.yaml
 ```
 
 * **TestCase**:
- A *TestCase* contains one or more *TestSteps*. You can declare **globals** variables to be re-used across test steps. For a more complete list of all the options, please see -
-
+ A *TestCase* contains one or more *TestSteps*. You can declare
+ **globals** variables, which are scoped to the *TestCase*, and add to
+ or override the **globals** defined in the *TestSuite*.
 
 ```
-{
-   "name":"Test Case X",
-   "globals":{
-      "variables":{
-        "base_api_url":"https://example/api/v1",
-        "api_key":"xxxx"
-      }
-   },
-   "testSteps":[
-      {
-         ... each TestStep is specified in here
-      },
-      {
-         ...  each TestStep is specified in here
-      }
-    ]
- ```
+name: "Ping"
+globals: 
+  variables: 
+    http: "http://localhost:8905"
+    https: "https://localhost:8081"
+testSteps:
+ - ...
+ - ...
+```
 
 * **TestStep**:
-  All of the action takes place in a **TestStep**.
-For a more complete list of all the options, please see.
+All of the action takes place in a **TestStep**.
 
-A TestStep contains the following -
+A TestStep contains the following:
 
 - **API end point invocation** - As part of the API endpoint invocation, you can provide the following params -
   - URL
   - HTTP headers
   - URL params
-  - HTTP method - get, put, post, delete ('get' is used by default)
+  - HTTP method - get, put, post, delete, patch - any method supported
+    by the *requests* library. ('get' is used by default)
 
-  URL is the only mandatory param.
+URL is the only mandatory param.
 
 - A series of assert statements specified as part of an **AssertMap**
-- Post step assignments
 
-Example of a TestStep:
+Example of a TestStep (JSON):
 
-  ```
+```
   testSteps: [
     {
        "name":"Name of TestStep",
@@ -96,10 +129,41 @@ Example of a TestStep:
        }
     }
   ]
-  ```
+```
+
+A complete example as YAML, leveraging the *yaml references*:
+
+```
+name: "Ping"
+globals: 
+  variables: 
+    http: "http://localhost:8905"
+    https: "https://localhost:8081"
+testSteps: 
+  - &test1
+    name: "ping http"
+    apiUrl: "{http}/ping"
+    method: "get"
+    params:
+      __raw__: true
+    assertMap: 
+      headers: 
+        connection: "keep-alive"
+        content-type: "text/plain; charset=utf-8"
+      payLoad:
+        __raw__: "pong"
+  - 
+    <<: *test1
+    name: "ping https"
+    apiUrl: "{https}/ping"
+```
+
+#Example Output
 
 #Installation
-pip install rester
+
+This fork (which adds YAML and exec support):
+ `pip install git+https://github.com/ninowalker/Rester.git@master`
 
 #Rester command line options
 - Run the default test case -
@@ -202,6 +266,25 @@ pip install rester
   ]
   ```
 
+- Get a non-JSON response, using the *__raw__* parameter.
+```
+name: "Ping"
+globals: 
+  variables: 
+    http: "http://localhost:8905"
+testSteps: 
+ - name: "ping http"
+    apiUrl: "{http}/ping"
+    method: "get"
+    params:
+      __raw__: true # this is a magic parameter
+    assertMap: 
+      headers: 
+        content-type: "text/plain; charset=utf-8"
+      payLoad:
+        __raw__: "pong"
+```
+
 #Examples of assert statements
 As mentioned previously, all of the assert statements are specified within an **assertMap** element
 
@@ -229,6 +312,7 @@ As mentioned previously, all of the assert statements are specified within an **
   "output.level" is 2
   "output.result" is eqal to "Message Success"
   "output.status" is greater than 3
+  "output.body" contains the word 'launched'
 
  ```
   testSteps: [
@@ -247,6 +331,7 @@ As mentioned previously, all of the assert statements are specified within an **
             "output.level":2,
             "output.result":"Message Success",
             "output.status":"-gt 3",
+			"output.body":"exec 'launched' in value"
         },
         ....
 
@@ -310,7 +395,7 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
-- **-eq**  -  eqal to
+- **-eq**  -  equal to
 
 ```
   e.g. parent.child.message == "error"
@@ -319,6 +404,17 @@ As mentioned previously, all of the assert statements are specified within an **
             "parent.child.message":"success",
       }
   ```
+
+- **exec**  -  evaluate a python expression where the node is passed
+  in as *value*
+
+```
+  e.g. parent.child.message == "hello world"
+      "payLoad":{
+            "parent.child.message":"exec len(value) > 7 and value.endswith('world')",
+      }
+  ```
+
 
 # Basic JSON Type checking
 ## The following JSON types are supported - Integer, Float, String, Array, Boolean
@@ -369,11 +465,14 @@ As mentioned previously, all of the assert statements are specified within an **
 # Contact
 rajeev@chitamoor.com
 
+This fork: nino@livefyre.com
+
 #TODO
 - Unit Tests
-- Plenty of refactoring :-). Make it more pythonic for starters
 - Cleaner test results summary (Tabular?)
 - Better support for assert expressions
 - Support for enums
 - Support for OAuth
-- Experiment with YAML format for specifying the tests
+- Look at https://pypi.python.org/pypi/mongoql-conv/0.4.1 for building
+  python expressions.
+- 
