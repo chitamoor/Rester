@@ -84,6 +84,4 @@ class ApiTestCaseRunner:
 
 #TODO
 # Support enums
-# Support basic types
-# Set up one more API examples
-
+# post processing

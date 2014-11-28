@@ -31,27 +31,13 @@ class Variables(object):
             self.logger.warn('WARN!!! Variable : %s Already defined!!!', key)
         self._variables[key] = self.expand(value)
 
-        # for key, value in config_section.globals._variables.items():
-        #       print key, value
-
-        # configSection.globals.assertMaps.each {
-        #     log.debug "Assert Map Name: ${it.name}"
-        #     log.debug "Assert Map : ${it.assertMap}"
-        #     if (globalAssertMaps["${it.name}"]) {
-        #         log.warn("WARN !!!AssertMap '\${it.name}' already found.")
-        #     }
-        #     def name = self.manifest.expand(it.name, globalAssertMaps)
-        #     globalAssertMaps["${name}"] = it.assertMap
-        # }
-
     def expand(self, expression):
         """Expands logical constructions."""
         self.logger.debug("expand : expression %s", str(expression))
         if not is_string(expression):
             return expression
 
-        result = self._pattern.sub(
-            lambda var: str(self._variables[var.group(1)]), expression)
+        result = self._pattern.sub(lambda var: str(self._variables[var.group(1)]), expression)
 
         result = result.strip()
         self.logger.debug('expand : %s - result : %s', expression, result)

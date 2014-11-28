@@ -1,13 +1,7 @@
-Rester  + YAML + Exec + ... + More to come.
+Rester
 =======
 
-This is a *heavily modified fork* of the very good
-https://github.com/chitamoor/Rester project, currently under heavy
-development. If you're a web platform developer, this is (will be) a
-great framework for declarative testing.
-
-
-Framework for testing (RESTful) APIs
+Framework for testing (RESTful) HTTP APIs
 ----------------------------------
 Rester allows you to test your APIs using a non-programatic or non-GUI
 based approach (which are some of the more conventional ways of
@@ -144,8 +138,7 @@ testSteps:
     name: "ping http"
     apiUrl: "{http}/ping"
     method: "get"
-    params:
-      __raw__: true
+	raw: true
     assertMap: 
       headers: 
         connection: "keep-alive"
@@ -268,7 +261,7 @@ This fork (which adds YAML and exec support):
   ]
   ```
 
-- Get a non-JSON response, using the *__raw__* parameter.
+- Get a non-JSON response, using the *raw* option.
 ```
 name: "Ping"
 globals: 
@@ -278,8 +271,7 @@ testSteps:
  - name: "ping http"
     apiUrl: "{http}/ping"
     method: "get"
-    params:
-      __raw__: true # this is a magic parameter
+    raw: true
     assertMap: 
       headers: 
         content-type: "text/plain; charset=utf-8"
@@ -400,7 +392,7 @@ As mentioned previously, all of the assert statements are specified within an **
 - **-eq**  -  equal to
 
 ```
-  e.g. parent.child.message == "error"
+  e.g. parent.child.message == "success"
       "payLoad":{
             "parent.child.message":"-eq success",  # either will work
             "parent.child.message":"success",
@@ -419,7 +411,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
 
 # Basic JSON Type checking
-## The following JSON types are supported - Integer, Float, String, Array, Boolean
+## The following JSON types are supported - Integer, Float, String, Array, Boolean and Object
 
 -  check if parent.child.message is a String
 ```
@@ -442,6 +434,42 @@ As mentioned previously, all of the assert statements are specified within an **
       }
   ```
 
+# Support for lists/arrays
+-  Sample payload
+```
+       "entries":[{
+                  "id":1
+                  },
+                  {
+                  "id":2
+                  },{
+                  "id":3
+                  }
+                ]
+      }
+```
+
+- For the above payload, verify that **entries** is an Array element
+```
+       "payLoad":{
+            "entries":"Array"
+      }
+```
+
+- Verify the length of the **entries** Array element
+```
+       "payLoad":{
+            "entries._length":3,
+      }
+```
+
+- Verify the first and the second element of the **entries** Array element
+```
+       "payLoad":{
+            "entries[0].id":1,
+            "entries[1].id":2
+      }
+```
 
 # Using variables declarations
 - Variables are declared in the "globals" section of the TestSuite
@@ -467,14 +495,31 @@ As mentioned previously, all of the assert statements are specified within an **
 # Contact
 rajeev@chitamoor.com
 
-This fork: nino@livefyre.com
+# Changes
+
+**Unreleased**
+
+- Breaking change: `__raw__` to `raw` on the *TestStep*.
+- Feature: `status` to *TestStep.assertMap*, allowing for non-200
+  replies.
+
 
 #TODO
-- Unit Tests
-- Cleaner test results summary (Tabular?)
-- Better support for assert expressions
+- Use meta-programming to allow direct integration into unittest
+  frameworks, and run with tests a la `nose`, to leverage all the things.
+- Switch `assertMap` to `asserts`, so that you can have multiple
+  asserts on a single key.
+- Switch `payLoad` to `payload`
+- Use code `eval` for all tests, because expressiveness; `value ==
+  '123'` instead of `123`.
+- Allow module imports for inclusion in the `eval` tests.
+- Support for computed variables; e.g. `time: time.time()`
+- Support lists in the `assertMap`, so that a single key can have
+  multiple asserts on it.
+- Support assignments into the variable name space, to enable
+  continuity of values between tests. E.g. a `POST` returns an `id`
+  which is used in the next step `GET`.
+- Merge variables into the eval space; no string expansion on asserts.
 - Support for enums
 - Support for OAuth
-- Look at https://pypi.python.org/pypi/mongoql-conv/0.4.1 for building
-  python expressions.
-- 
+- Run in `record mode` to capture responses for testing directly.

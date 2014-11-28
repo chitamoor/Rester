@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='Rester',
-    version='1.0.0',
+    version='1.0.1',
     author='Rajeev Chitamoor',
     author_email='rajeev@chitamoor.com',
     url='https://github.com/chitamoor/rester',
