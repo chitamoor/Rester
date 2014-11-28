@@ -470,11 +470,22 @@ rajeev@chitamoor.com
 This fork: nino@livefyre.com
 
 #TODO
-- Unit Tests
-- Cleaner test results summary (Tabular?)
-- Better support for assert expressions
+- Use meta-programming to allow direct integration into unittest
+  frameworks, and run with tests a la `nose`.
+- Switch `assertMap` to `asserts`, so that you can have multiple
+  asserts on a single key.
+- Use code `eval` for all tests; `value == '123'` is barely longer than
+  `123`.
+- Allow module imports for inclusion in the `eval` tests.
+- Support assignments into the variable name space, to enable
+  continuity of values between tests. E.g. a `POST` returns an `id`
+  which is used in the next step `GET`.
+- Merge variables into the eval space; no string expansion on asserts.
 - Support for enums
 - Support for OAuth
+- Run in `record mode` to capture responses for testing directly.
+
+# Explored and passed
 - Look at https://pypi.python.org/pypi/mongoql-conv/0.4.1 for building
   python expressions.
-- 
+  -Ultimately, substituing python for a subset will hamper the project.
