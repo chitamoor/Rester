@@ -11,9 +11,8 @@ class HttpClient(object):
     def __init__(self, **kwargs):
         self.extra_request_opts = kwargs
 
-    def request(self, api_url, method, headers, params, dump_response):
-        is_raw = params.pop('__raw__', False)
-        self.logger.debug(
+    def request(self, api_url, method, headers, params, is_raw):
+        self.logger.info(
             '\n Invoking REST Call... api_url: %s, method: %s : ', api_url, method)
 
         try:
@@ -28,9 +27,14 @@ class HttpClient(object):
         else:
             payload = response.json()
 
-        if dump_response:
-            self.logger.info('JSON response Headers -  %s' + str(response.headers))
-            self.logger.info('JSON response -  %s' + json.dumps(
-                payload, sort_keys=True, indent=2))
+        if response.status_code < 300:
+            emit = self.logger.debug
+        else:
+            emit = self.logger.warn
+        emit('Response Headers: %s', str(response.headers))
+        if is_raw:
+            emit('Response:\n%s\n' + response.text)
+        else:
+            emit('Response:\n%s\n' + json.dumps(payload, sort_keys=True, indent=2))
 
         return ResponseWrapper(response.status_code, payload, response.headers)

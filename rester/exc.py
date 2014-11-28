@@ -21,8 +21,8 @@ class TestCaseExec(object):
         self.skipped = []
 
     def __call__(self):
-        #?
-        #skip_all_aubsequent_tests = False
+        # What was this?
+        #skip_all_subsequent_tests = False
 
         for step in self.case.steps:
             self.logger.debug('Test Step Name : %s', step.name)
@@ -69,7 +69,8 @@ class TestCaseExec(object):
         http_client = HttpClient(**self.case.request_opts)
         failures = Failure([], None)
         try:
-            method = test_step.method or "get"
+            method = getattr(test_step, 'method', 'get')
+            is_raw = getattr(test_step, 'raw', False)
             self.logger.info('\n=======> Executing TestStep : %s, method : %s', test_step.name, method)
 
             # process and set up headers
@@ -84,7 +85,11 @@ class TestCaseExec(object):
 
             url = self.case.variables.expand(test_step.apiUrl)
             self.logger.debug('Evaluated URL : %s', url)
-            response_wrapper = http_client.request(url, method, headers, params, True)
+            response_wrapper = http_client.request(url, method, headers, params, is_raw)
+
+            expected_status = getattr(getattr(test_step, 'assertMap'), 'status', 200)
+            if response_wrapper.status != expected_status:
+                failures.errors.append("status(%s) != expected status(%s)" % (response_wrapper.status_code, expected_status))
 
             if hasattr(test_step, "assertMap"):
                 assertMap = test_step.assertMap
@@ -106,14 +111,14 @@ class TestCaseExec(object):
             return failures
         return None
 
-    def _assert_element_list(self, failures, test_step, target_response, assert_list):
-        self.logger.info("Inside assert_element_list")
+    def _assert_element_list(self, failures, test_step, response, assert_list):
+        self.logger.debug("Inside assert_element_list: %s", response)
 
         test_step.assertResults = []
 
         for key, value in assert_list:
             self.logger.debug('key : %s, value : %s', key, value)
-            json_eval_expr = getattr(target_response, key, '')
+            json_eval_expr = getattr(response, key, '')
             if json_eval_expr is None:
                 assert_message = 'key %s not found in target response', key
                 self.logger.error('%s', assert_message)
@@ -158,6 +163,8 @@ class TestCaseExec(object):
             value = self.case.variables.expand(value)
             self.logger.debug(' ---> final evaluated expression  : %s and type %s ', value, type(value))
 
+            if isinstance(json_eval_expr, basestring):
+                value = str(value)
             # construct the logical assert expression
             if final_lg_op != 'exec':
                 assert_expr = 'json_eval_expr {0} value'.format(final_lg_op)

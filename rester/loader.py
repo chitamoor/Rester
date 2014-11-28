@@ -52,7 +52,6 @@ class TestCase(object):
         self.variables.update(data.get('globals', {}).get('variables', {}).items())
 
 
-
 def load(filename, fh):
     if filename.endswith(".yaml"):
         return yaml.load(fh.read())
