@@ -1,8 +1,10 @@
-import logging
-import argparse
 from testcase import ApiTestCaseRunner
+import argparse
+import logging
+import sys
 
 DEFAULT_TEST_CASE = 'test_case.json'
+
 
 def parse_cmdln_args():
     parser = argparse.ArgumentParser(description='Process command line args')
@@ -15,14 +17,14 @@ def parse_cmdln_args():
     args = parser.parse_args()
     return (args.log.upper(), args.tc, args.ts)
 
+
 def run():
     log_level, test_case, test_suite = parse_cmdln_args()
     print log_level, test_case, test_suite
     logging.basicConfig()
-    logger = logging.getLogger('ApiTestCaseRunner')
+    logger = logging.getLogger('rester')
     logger.setLevel(log_level)
-    print log_level
-    test_runner = ApiTestCaseRunner(logger)
+    test_runner = ApiTestCaseRunner()
     if test_case is not None:
         print "test case has been specified"
         test_runner.run_test_case(test_case)
@@ -33,7 +35,8 @@ def run():
         print "running the default test case"
         test_runner.run_test_case(DEFAULT_TEST_CASE)
     test_runner.display_report()
+    return any((result.get('failed') for result in test_runner.results))
 
 if (__name__ == '__main__'):
-    run()
+    sys.exit(run)
 
