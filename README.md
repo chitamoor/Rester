@@ -104,7 +104,7 @@ A TestStep contains the following:
 
 URL is the only mandatory param.
 
-- A series of assert statements specified as part of an **AssertMap**
+- A series of "assert" statements specified as part of the **asserts** element
 
 Example of a TestStep (JSON):
 
@@ -113,11 +113,11 @@ Example of a TestStep (JSON):
     {
        "name":"Name of TestStep",
   		   "apiUrl":"http://example/api/v1/helloworld/print",
-       "assertMap":{
+       "asserts":{
              "headers":{
                  "content-type":"application/json; charset=utf-8"
              }
-             "payLoad":{
+             "payload":{
                 "message":"Hello World!"
              }
        }
@@ -139,11 +139,11 @@ testSteps:
     apiUrl: "{http}/ping"
     method: "get"
 	raw: true
-    assertMap: 
+    asserts: 
       headers: 
         connection: "keep-alive"
         content-type: "text/plain; charset=utf-8"
-      payLoad:
+      payload:
         __raw__: "pong"
   - 
     <<: *test1
@@ -272,15 +272,15 @@ testSteps:
     apiUrl: "{http}/ping"
     method: "get"
     raw: true
-    assertMap: 
+    asserts: 
       headers: 
         content-type: "text/plain; charset=utf-8"
-      payLoad:
+      payload:
         __raw__: "pong"
 ```
 
 #Examples of assert statements
-As mentioned previously, all of the assert statements are specified within an **assertMap** element
+As mentioned previously, all of the assert statements are specified within an **asserts** element
 
 - Assert "content-type" HTTP header
  ```
@@ -291,7 +291,7 @@ As mentioned previously, all of the assert statements are specified within an **
        ....
     }
 
-    "assertMap":{
+    "asserts":{
 
         "headers":{
           "content-type":"application/json; charset=utf-8"
@@ -316,16 +316,16 @@ As mentioned previously, all of the assert statements are specified within an **
        ....
     }
 
-    "assertMap":{
+    "asserts":{
         "headers": {
            ....
         },
 
-        "payLoad":{
+        "payload":{
             "output.level":2,
             "output.result":"Message Success",
             "output.status":"-gt 3",
-			"output.body":"exec 'launched' in value"
+			      "output.body":"exec 'launched' in value"
         },
         ....
 
@@ -341,7 +341,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
   e.g. parent.child > 3
 
-      "payLoad":{
+      "payload":{
             "parent.child":"-gt 3",
       }
   ```
@@ -351,7 +351,7 @@ As mentioned previously, all of the assert statements are specified within an **
   ```
   e.g. parent.child >= 3
 
-      "payLoad":{
+      "payload":{
             "parent.child":"-ge 3",
       }
   ```
@@ -362,7 +362,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
   e.g. parent.child < 2
 
-      "payLoad":{
+      "payload":{
             "parent.child":"-lt 2",
       }
   ```
@@ -373,7 +373,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
   e.g. parent.child <= 2
 
-      "payLoad":{
+      "payload":{
             "parent.child":"-le 2",
       }
   ```
@@ -384,7 +384,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
   e.g. parent.child.message != "success"
 
-      "payLoad":{
+      "payload":{
             "parent.child.message":"-ne success",
       }
   ```
@@ -393,7 +393,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
 ```
   e.g. parent.child.message == "success"
-      "payLoad":{
+      "payload":{
             "parent.child.message":"-eq success",  # either will work
             "parent.child.message":"success",
       }
@@ -404,10 +404,31 @@ As mentioned previously, all of the assert statements are specified within an **
 
 ```
   e.g. parent.child.message == "hello world"
-      "payLoad":{
+      "payload":{
             "parent.child.message":"exec len(value) > 7 and value.endswith('world')",
       }
   ```
+
+# Storing intermediate values
+## Values from the payload can be extracted and assigned to variables in the variable name space. The assignments are specified as part of the **postAsserts** element and should be placed right after the **asserts**  element.
+
+```
+    "asserts":{
+        "headers": {
+           ....
+        },
+        "payload":{
+            "output.result":"Message Success",
+            ....
+        },
+        ....
+    },
+    "postAsserts": {
+        "variable_for_next_step":""output.id"
+        ....
+    }
+```
+
 
 
 # Basic JSON Type checking
@@ -415,21 +436,21 @@ As mentioned previously, all of the assert statements are specified within an **
 
 -  check if parent.child.message is a String
 ```
-       "payLoad":{
+       "payload":{
             "parent.child.message":"String",
       }
 ```
 
 - check if parent.child.version is an Integer
 ```
-      "payLoad":{
+      "payload":{
             "parent.child.version":"Integer",
       }
 ```
 
 - check if parent.child is an Object
 ```
-      "payLoad":{
+      "payload":{
             "parent.child":"Object",
       }
   ```
@@ -451,21 +472,21 @@ As mentioned previously, all of the assert statements are specified within an **
 
 - For the above payload, verify that **entries** is an Array element
 ```
-       "payLoad":{
+       "payload":{
             "entries":"Array"
       }
 ```
 
 - Verify the length of the **entries** Array element
 ```
-       "payLoad":{
+       "payload":{
             "entries._length":3,
       }
 ```
 
 - Verify the first and the second element of the **entries** Array element
 ```
-       "payLoad":{
+       "payload":{
             "entries[0].id":1,
             "entries[1].id":2
       }
@@ -503,25 +524,17 @@ Nino Walker - nino@livefyre.com
 **Unreleased**
 
 - Breaking change: `__raw__` to `raw` on the *TestStep*.
-- Feature: `status` to *TestStep.assertMap*, allowing for non-200
+- Feature: `status` to *TestStep.asserts*, allowing for non-200
   replies.
 
 
 #TODO
 - Use meta-programming to allow direct integration into unittest
   frameworks, and run with tests a la `nose`, to leverage all the things.
-- Switch `assertMap` to `asserts`, so that you can have multiple
-  asserts on a single key.
-- Switch `payLoad` to `payload`
 - Use code `eval` for all tests, because expressiveness; `value ==
   '123'` instead of `123`.
 - Allow module imports for inclusion in the `eval` tests.
 - Support for computed variables; e.g. `time: time.time()`
-- Support lists in the `assertMap`, so that a single key can have
-  multiple asserts on it.
-- Support assignments into the variable name space, to enable
-  continuity of values between tests. E.g. a `POST` returns an `id`
-  which is used in the next step `GET`.
 - Merge variables into the eval space; no string expansion on asserts.
 - Support for enums
 - Support for OAuth
