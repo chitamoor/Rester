@@ -38,5 +38,5 @@ def run():
     return any((result.get('failed') for result in test_runner.results))
 
 if (__name__ == '__main__'):
-    sys.exit(run)
+    run()
 

@@ -1,4 +1,4 @@
-from rester.struct import DictWrapper
+from rester.rstruct import DictWrapper
 import json
 import os
 import yaml

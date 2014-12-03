@@ -1,6 +1,6 @@
 from logging import getLogger
 from rester.http import HttpClient
-from rester.struct import DictWrapper
+from rester.rstruct import DictWrapper
 from testfixtures import log_capture
 import collections
 import re
