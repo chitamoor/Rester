@@ -410,7 +410,7 @@ As mentioned previously, all of the assert statements are specified within an **
   ```
 
 # Storing intermediate values
-## Values from the payload can be extracted and assigned to variables in the variable name space. The assignments are specified as part of the **postAsserts** element and should be placed right after the **asserts**  element.
+Values from the payload can be extracted and assigned to variables in the variable name space. The assignments are specified as part of the **postAsserts** element and should be placed right after the **asserts**  element.
 
 ```
     "asserts":{
@@ -531,7 +531,7 @@ Nino Walker - nino@livefyre.com
 #TODO
 - Use meta-programming to allow direct integration into unittest
   frameworks, and run with tests a la `nose`, to leverage all the things.
-- Use code `eval` for all tests, because expressiveness; `value ==
+  - Use code `eval` for all tests, because expressiveness; `value ==
   '123'` instead of `123`.
 - Allow module imports for inclusion in the `eval` tests.
 - Support for computed variables; e.g. `time: time.time()`
