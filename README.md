@@ -495,6 +495,9 @@ As mentioned previously, all of the assert statements are specified within an **
 # Contact
 rajeev@chitamoor.com
 
+# Contributors
+Nino Walker - nino@livefyre.com
+
 # Changes
 
 **Unreleased**
