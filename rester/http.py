@@ -1,5 +1,5 @@
 from logging import getLogger
-from rester.rstruct import ResponseWrapper
+from rester.struct import ResponseWrapper
 import json
 import requests
 
