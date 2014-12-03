@@ -405,6 +405,9 @@ As mentioned previously, all of the assert statements are specified within an **
 # Contact
 rajeev@chitamoor.com
 
+# Contributors
+Nino Walker - nino@livefyre.com
+
 #TODO
 - Unit Tests
 - Plenty of refactoring :-). Make it more pythonic for starters
