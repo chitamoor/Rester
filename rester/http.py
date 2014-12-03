@@ -13,7 +13,7 @@ class HttpClient(object):
 
     def request(self, api_url, method, headers, params, is_raw):
         self.logger.info(
-            '\n Invoking REST Call... api_url: %s, method: %s : ', api_url, method)
+            '\n Invoking REST Call... api_url: %s, method: %s, headers %s : ', api_url, method, headers)
 
         try:
             func = getattr(requests, method)
@@ -22,9 +22,9 @@ class HttpClient(object):
             raise
         response = func(api_url, headers=headers, params=params, **self.extra_request_opts)
 
-        if is_raw:
+        if is_raw or 'application/json' not in response.headers['content-type']:
             payload = {"__raw__": response.text}
-        else:
+        else:    
             payload = response.json()
 
         if response.status_code < 300:

@@ -87,19 +87,20 @@ class TestCaseExec(object):
             self.logger.debug('Evaluated URL : %s', url)
             response_wrapper = http_client.request(url, method, headers, params, is_raw)
 
-            expected_status = getattr(getattr(test_step, 'assertMap'), 'status', 200)
-            if response_wrapper.status != expected_status:
-                failures.errors.append("status(%s) != expected status(%s)" % (response_wrapper.status_code, expected_status))
+            # expected_status = getattr(getattr(test_step, 'asserts'), 'status', 200)
+            # if response_wrapper.status != expected_status:
+            #     failures.errors.append("status(%s) != expected status(%s)" % (response_wrapper.status, expected_status))
 
-            if hasattr(test_step, "assertMap"):
-                assertMap = test_step.assertMap
-                if hasattr(assertMap, "headers"):
-                    self.logger.debug('Evaluating Response headers : ' + str(response_wrapper.headers))
-                    self._assert_element_list(failures, test_step, response_wrapper.headers, test_step.assertMap.headers.items().items())
+            if hasattr(test_step, "asserts"):
+                asserts = test_step.asserts
+                if hasattr(asserts, "headers"):
+                    self._assert_element_list('Header', failures, test_step, response_wrapper.headers, test_step.asserts.headers.items().items())
 
-                if hasattr(assertMap, "payLoad"):
+                if hasattr(asserts, "payload"):
                     self.logger.debug('Evaluating Response Payload')
-                    self._assert_element_list(failures, test_step, response_wrapper.body, test_step.assertMap.payLoad.items().items())
+                    self._assert_element_list('Payload', failures, test_step, response_wrapper.body, test_step.asserts.payload.items().items())
+            else:
+                self.logger.warn('\n=======> No "asserts" element found in TestStep %s', test_step.name)
 
         except Exception as inst:
             failures.errors.append(traceback.format_exc())
@@ -109,9 +110,15 @@ class TestCaseExec(object):
 
         if failures.errors:
             return failures
+        
+        # execute all the assignment statements
+        if hasattr(test_step, 'postAsserts') and test_step.postAsserts is not None:          
+            for key, value in test_step.postAsserts.items().items():
+                self._process_post_asserts(response_wrapper.body, key, value)
+
         return None
 
-    def _assert_element_list(self, failures, test_step, response, assert_list):
+    def _assert_element_list(self, section, failures, test_step, response, assert_list):
         self.logger.debug("Inside assert_element_list: %s", response)
 
         test_step.assertResults = []
@@ -120,12 +127,12 @@ class TestCaseExec(object):
             self.logger.debug('key : %s, value : %s', key, value)
             json_eval_expr = getattr(response, key, '')
             if json_eval_expr is None:
-                assert_message = 'key %s not found in target response', key
+                assert_message = 'assert statement :%s not found in target response', key
                 self.logger.error('%s', assert_message)
                 failures.errors.append(assert_message)
                 continue
 
-            self.logger.info('---> json_eval_expr : %s and type : %s', json_eval_expr, type(json_eval_expr))
+            self.logger.debug('---> json_eval_expr : %s and type : %s', json_eval_expr, type(json_eval_expr))
 
             # check for basic JSON types
             json_types = {'Integer':'int', 'String':'str', 'Array':'list', 'Float':'float', 'Boolean':'bool', 'Object':'dict'}
@@ -168,7 +175,7 @@ class TestCaseExec(object):
             # construct the logical assert expression
             if final_lg_op != 'exec':
                 assert_expr = 'json_eval_expr {0} value'.format(final_lg_op)
-                assert_literal_expr = '"{0} {1} {2}"'.format(json_eval_expr, final_lg_op, value)
+                assert_literal_expr = "{}:{{{}}} {} {}".format(key, json_eval_expr, final_lg_op, value)
                 self.logger.debug('     ---> Assert_expr : ' + assert_expr)
                 assert_result = eval(assert_expr)
             else:
@@ -180,13 +187,16 @@ class TestCaseExec(object):
             self.logger.debug('assert evaluation result  : %s', assert_result)
 
             if not assert_result:
-                assert_message = 'Assert Statement : {0}   ---> Fail!'.format(assert_literal_expr)
+                assert_message = '{} Assert Statement : {}   ---> Fail!'.format(section, assert_literal_expr)
                 self.logger.error('%s', assert_message)
                 failures.errors.append(assert_message)
             else:
-                assert_message = 'Assert Statement : {0}  ----> Pass!'.format(assert_literal_expr)
+                assert_message = '{} Assert Statement : {}  ----> Pass!'.format(section, assert_literal_expr)
                 self.logger.info('%s', assert_message)
 
+    def _process_post_asserts(self, response, key, value):
+        self.logger.debug("evaled value: {}".format(getattr(response, value, '')))
+        self.case.variables.add_variable(key, getattr(response, value, ''))
 
 def _evaluate(clause, value):
     assert_expr = 'result = {0}'.format(clause)
