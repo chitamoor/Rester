@@ -157,8 +157,7 @@ See: https://gist.github.com/ninowalker/1fe8aad019feab3fe265
 
 #Installation
 
-This fork (which adds YAML and exec support):
- `pip install git+https://github.com/ninowalker/Rester.git@master`
+ `pip install git+https://github.com/chitamoor/Rester.git@master`
 
 #Rester command line options
 - Run the default test case -
