@@ -527,7 +527,6 @@ Nino Walker - nino@livefyre.com
 - Feature: `status` to *TestStep.asserts*, allowing for non-200
   replies.
 
-
 #TODO
 - Use meta-programming to allow direct integration into unittest
   frameworks, and run with tests a la `nose`, to leverage all the things.
