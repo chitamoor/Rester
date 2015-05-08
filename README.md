@@ -300,6 +300,7 @@ As mentioned previously, all of the assert statements are specified within an **
 
     }
   ]
+  ```
 
 - Assert specific payload elements -
   "output.level" is 2
