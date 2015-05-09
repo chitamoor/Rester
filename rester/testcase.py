@@ -1,7 +1,7 @@
 from logging import getLogger
 from rester.exc import TestCaseExec
 from rester.http import HttpClient
-from rester.loader import TestSuite
+from rester.loader import TestSuite, TestCase
 import yaml
 
 class bcolors:
@@ -26,7 +26,8 @@ class ApiTestCaseRunner:
         for test in test_suite.test_cases:
             self.run_test_case(test)
 
-    def run_test_case(self, case):
+    def run_test_case(self, test_case_file_name):
+	case = TestCase(None, test_case_file_name)
         case.load()
         self._run_case(case)
 

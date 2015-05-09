@@ -109,20 +109,22 @@ URL is the only mandatory param.
 Example of a TestStep (JSON):
 
 ```
-  testSteps: [
-    {
-       "name":"Name of TestStep",
-  		   "apiUrl":"http://example/api/v1/helloworld/print",
-       "asserts":{
-             "headers":{
-                 "content-type":"application/json; charset=utf-8"
-             }
-             "payload":{
-                "message":"Hello World!"
-             }
-       }
-    }
-  ]
+  {
+    "testSteps": [
+        {
+            "name":"Name of TestStep",
+            "apiUrl":"http://example/api/v1/helloworld/print",
+            "asserts":{
+                "headers":{
+                    "content-type":"application/json; charset=utf-8"
+                },
+                "payload":{
+                    "message":"Hello World!"
+                }
+            }
+        }
+     ]
+}
 ```
 
 A complete example as YAML, leveraging the *yaml references*:
