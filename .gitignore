@@ -1,5 +1,7 @@
 .idea/
 
+rester/examples/dma-api/
+
 *.pyc
 .project
 .pydevproject
