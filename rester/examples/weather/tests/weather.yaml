@@ -16,7 +16,7 @@ testSteps:
         "coord.lat": 37.39
 
 
-  - name: "Get Weather By City ID"
+  - name: "Get Weather By City ID - FAIL"  # Example of a Failed Test
     apiUrl: "{baseApiUrl}/data/2.5/weather"
     params:   # pass params separately
       appid: "{api_key}"
@@ -28,4 +28,4 @@ testSteps:
         status: 200
       payload:
         "coord.lon": 145.77
-        "coord.lat": -16.93
+        "coord.lat": -16.93   # Actual lat value returned by the API is 16.92, so the assert will fail, and hence the test!
