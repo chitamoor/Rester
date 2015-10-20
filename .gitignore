@@ -1,4 +1,7 @@
+.idea/
+
 *.pyc
 .project
 .pydevproject
 Rester.egg-info
+

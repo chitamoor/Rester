@@ -1,0 +1,31 @@
+name: "WeatherAPI"
+globals:
+  variables:
+    baseApiUrl: "http://api.openweathermap.org"
+    api_key: "bd82977b86bf27fb59a04b61b657fb6f"
+
+testSteps:
+  - name: "Get Weather By Zip Code"
+    apiUrl: "{baseApiUrl}/data/2.5/weather?zip=94040&appid={api_key}"  # pass params in the URL
+    method: "get"
+    asserts:
+      headers:
+        status: 200
+      payload:
+        "coord.lon": -122.08
+        "coord.lat": 37.39
+
+
+  - name: "Get Weather By City ID"
+    apiUrl: "{baseApiUrl}/data/2.5/weather"
+    params:   # pass params separately
+      appid: "{api_key}"
+      id: 2172797
+    method: "get"
+
+    asserts:
+      headers:
+        status: 200
+      payload:
+        "coord.lon": 145.77
+        "coord.lat": -16.93
