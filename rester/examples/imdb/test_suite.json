@@ -1,0 +1,3 @@
+{
+   "test_cases":[ "tests/imdb.yaml"]
+}
