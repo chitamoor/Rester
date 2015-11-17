@@ -3,13 +3,12 @@ Rester
 
 Framework for testing (RESTful) HTTP APIs
 ----------------------------------
-Rester allows you to test your APIs using a non-programatic or non-GUI
-based approach (which are some of the more conventional ways of
-testing RESTFul APIs). *Rester* is inspired by various unit testing
+Rester allows you to test your APIs using a non-programmatic or non-GUI
+based approach, which are some of the more conventional ways of
+testing RESTFul APIs. *Rester* is inspired by various unit testing
 frameworks like JUnit, 'unittest' (python) etc and is conceptually
-organized like those frameworks but is geared towards testing RESTful
-API endpoints. With *Rester*, all tests are specified in YAML or JSON,
-so it can also be used by non-programmers as well.
+organized like those frameworks, but is geared towards testing RESTful
+API endpoints. With *Rester*, all tests are specified in YAML or JSON.
 
 
 #So, why Rester?
@@ -20,13 +19,13 @@ Testing RESTful APIs generally involves two prediticable steps -
 
 Most testing tools available for testing RESTful APIs use some sort of
 a GUI based approach which doesn't lend itself towards re-use, better
-code organization, abstraction etc and some of the other benefits that
+code organization, abstraction and some of the other benefits that
 are generally available with more programmatic frameworks like
 JUnit. Programmatically building test cases provides the highest level
 of flexibility and sophistication, but the downside to this approach
 is that it ends up with lots of fairly tedious and repetitive
 code. Conceptually, Rester is similar to existing unit testing
-frameworks, but it uses JSON (instead of a programming language) to
+frameworks, but it uses JSON or YAML (instead of a programming language) to
 implement/specify the actual tests. Programmers and non-programmers
 can reap the benefits with the Rester approach.
 
