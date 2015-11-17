@@ -515,14 +515,15 @@ Values from the payload can be extracted and assigned to variables in the variab
   ```
 
 # Dockerized Rester
-## Docker Image for Rester: raseev/rester
+Run the docker image **raseev/rester**
 ### Running an existing test from the examples directory
 ```
   docker run -it --rm --name rester raseev/rester apirunner --ts examples/weather/test_suite.json 
 
-    docker run -it --rm --name rester raseev/rester apirunner --ts examples/weather/test_suite.json 
+  docker run -it --rm --name rester raseev/rester apirunner --ts examples/imdb/test_suite.json 
 ```
-### Running a new test - use the docker **volume** option to specific the directory that contains the tests
+### Running a new test 
+Use the docker **volume** option to specific the directory that contains the tests
 ```
   docker run -v $(pwd)/rester/examples:/tests -it --rm --name rester raseev/rester apirunner --ts tests/imdb/test_suite.json --log=DEBUG
 ```
