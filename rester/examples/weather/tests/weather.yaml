@@ -2,7 +2,7 @@ name: "WeatherAPI"
 globals:
   variables:
     baseApiUrl: "http://api.openweathermap.org"
-    api_key: "bd82977b86bf27fb59a04b61b657fb6f"
+    api_key: "2de143494c0b295cca9337e1e96b00e0"
 
 testSteps:
   - name: "Get Weather By Zip Code"
