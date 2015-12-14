@@ -1,0 +1,1 @@
+# Testing Rester with HttpBin API
