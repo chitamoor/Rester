@@ -19,18 +19,18 @@ def parse_cmdln_args():
 
 
 def run():
-    log_level, test_case, test_suite = parse_cmdln_args()
-    print log_level, test_case, test_suite
+    log_level, test_case_file, test_suite_file = parse_cmdln_args()
+    print log_level, test_case_file, test_suite_file
     logging.basicConfig()
     logger = logging.getLogger('rester')
     logger.setLevel(log_level)
     test_runner = ApiTestCaseRunner()
-    if test_case is not None:
+    if test_case_file is not None:
         print "test case has been specified"
-        test_runner.run_test_case(test_case)
-    elif test_suite is not None:
+        test_runner.run_test_case(test_case_file)
+    elif test_suite_file is not None:
         print "test suite has been specified"
-        test_runner.run_test_suite(test_suite)
+        test_runner.run_test_suite(test_suite_file)
     else:
         print "running the default test case"
         test_runner.run_test_case(DEFAULT_TEST_CASE)

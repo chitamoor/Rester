@@ -1,0 +1,30 @@
+name: "ImdbAPI"
+globals:
+  variables:
+    baseApiUrl: "http://www.omdbapi.com"
+
+testSteps:
+  - name: "Get Movie By Title"
+    apiUrl: "{baseApiUrl}/?t=Frozen&y=&plot=short&r=json"  # pass params in the URL
+    method: "get"
+    skip: true
+    asserts:
+      headers:
+        status: 200
+      payload:
+        "Title": "Frozen"
+        "Metascore": 74
+    postAsserts:
+      "imdbID": "imdbID"  # Example of storing a payload element in a variable
+
+  - name: "Get Movie By imdbID (retrieved in the previous Step)" 
+    apiUrl: "{baseApiUrl}/?i={imdbID}&r=json"
+    method: "get"
+    skip: true
+
+    asserts:
+      headers:
+        status: 200
+      payload:
+        "Title": "Frozen"
+        "Metascore": 74

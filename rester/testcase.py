@@ -22,14 +22,16 @@ class ApiTestCaseRunner:
 
     def run_test_suite(self, test_suite_file_name):
         test_suite = TestSuite(test_suite_file_name)
-        test_suite.load()
-        for test in test_suite.test_cases:
-            self.run_test_case(test)
+        for test_case in test_suite.test_cases:
+            self._run_case(test_case)
 
-    def run_test_case(self, test_case_file_name):
-	case = TestCase(None, test_case_file_name)
-        case.load()
+    def run_test_case(self, test_case_file):
+        case = TestCase(None, test_case_file)
         self._run_case(case)
+
+    def _run_case(self, case):
+        tc = TestCaseExec(case, self.options)
+        self.results.append(tc())
 
     def display_report(self):
         for result in self.results:
@@ -78,9 +80,6 @@ class ApiTestCaseRunner:
 #                        print "\n        ---> {0}".format(assert_result['message'])
 
 
-    def _run_case(self, case):
-        tc = TestCaseExec(case, self.options)
-        self.results.append(tc())
 
 
 #TODO

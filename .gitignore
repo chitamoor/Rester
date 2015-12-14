@@ -1,4 +1,9 @@
+.idea/
+
+rester/examples/dma-api/
+
 *.pyc
 .project
 .pydevproject
 Rester.egg-info
+

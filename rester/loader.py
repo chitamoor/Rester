@@ -10,6 +10,7 @@ class TestSuite(object):
         self.filename = filename
         self.test_cases = []
         self.variables = Variables()
+        self.load()
 
     def load(self):
         with open(self.filename) as fh:
@@ -30,6 +31,7 @@ class TestCase(object):
         self.variables = Variables()
         if suite:
             self.variables.update(suite.variables)
+        self.load()
 
     def __getattr__(self, key):
         return getattr(self.data, key)

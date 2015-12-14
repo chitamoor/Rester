@@ -1,0 +1,31 @@
+name: "WeatherAPI"
+globals:
+  variables:
+    baseApiUrl: "http://api.openweathermap.org"
+    api_key: "2de143494c0b295cca9337e1e96b00e0"
+
+testSteps:
+  - name: "Get Weather By Zip Code"
+    apiUrl: "{baseApiUrl}/data/2.5/weather?zip=94040&appid={api_key}"  # pass params in the URL
+    method: "get"
+    asserts:
+      headers:
+        status: 200
+      payload:
+        "coord.lon": -122.08
+        "coord.lat": 37.39
+
+
+  - name: "Get Weather By City ID - FAIL"  # Example of a Failed Test
+    apiUrl: "{baseApiUrl}/data/2.5/weather"
+    params:   # pass params separately
+      appid: "{api_key}"
+      id: 2172797
+    method: "get"
+
+    asserts:
+      headers:
+        status: 200
+      payload:
+        "coord.lon": 145.77
+        "coord.lat": -16.93   # Actual lat value returned by the API is 16.92, so the assert will fail, and hence the test!
