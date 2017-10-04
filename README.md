@@ -11,7 +11,7 @@ organized like those frameworks, but is geared towards testing RESTful
 API endpoints. With *Rester*, all tests are specified in YAML or JSON.
 
 
-#So, why Rester?
+# Why Rester?
 Testing RESTful APIs generally involves two prediticable steps -
 
 - Invoke the API end point
@@ -35,12 +35,12 @@ OAuth. Rester was mainly created to test internal APIs that generally
 bypass the need for authentication of the calls.
 
 
-#Practical uses of Rester
+# Practical uses of Rester
 - Perform "integration" testing of internal and external API endpoints
 - Examine and test complex response payloads
 - You can simply use Rester to dump and analyze API responses - headers, payload etc.
 
-#Assumptions
+# Assumptions
 - Rester does not manage the life-cycle of the container or the server
   that exposes the API endpoints, but assumes the API endpoints (to be
   tested) are up and avaliable.
@@ -51,7 +51,7 @@ bypass the need for authentication of the calls.
   in handy if you want to test a series of API end-points (invoked in
   succession) that modify system state in a particular way.
 
-#General Concepts
+# General Concepts
 
 * **TestSuite**:
  A *TestSuite* is collection of *TestCases*. The idea is to group
@@ -152,15 +152,15 @@ testSteps:
     apiUrl: "{https}/ping"
 ```
 
-#Example Output
+# Example Output
 
 See: https://gist.github.com/ninowalker/1fe8aad019feab3fe265
 
-#Installation
+# Installation
 
  `pip install git+https://github.com/chitamoor/Rester.git@master`
 
-#Rester command line options
+# Rester command line options
 - Run the default test case -
 
   `apirunner`
@@ -180,7 +180,7 @@ See: https://gist.github.com/ninowalker/1fe8aad019feab3fe265
 
   `apirunner --ts=./rester/examples/test_suite.json`
 
-#Other command line options
+# Other command line options
 - Adjust the log output or details
   Rester support varying levels of logs - DEBUG, INFO, WARN, ERROR. You can
   specify the level using the command line option ***--log=<LEVEL>***
@@ -191,12 +191,12 @@ See: https://gist.github.com/ninowalker/1fe8aad019feab3fe265
 
 - Just dump the JSON output
 
-#TestCase options
+# TestCase options
 - **Skipping tests**
 
-#TestStep options
+# TestStep options
 
-#Examples of API request invocations
+# Examples of API request invocations
 - Specify the HTTP headers as part of an API request
  ```
   testSteps: [
@@ -279,7 +279,7 @@ testSteps:
         __raw__: "pong"
 ```
 
-#Examples of assert statements
+# Examples of assert statements
 As mentioned previously, all of the assert statements are specified within an **asserts** element
 
 - Assert "content-type" HTTP header
@@ -303,7 +303,7 @@ As mentioned previously, all of the assert statements are specified within an **
   ]
   ```
 
-#Assert specific payload elements 
+# Assert specific payload elements 
 
 - "output.level" is 2
 - "output.result" is eqal to "Message Success"
